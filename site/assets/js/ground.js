@@ -158,9 +158,14 @@ form.addEventListener("submit", async (e) => {
   btn.disabled = true;
   setStatus("Finding that address…");
   try {
-    const hit = await geocode(/\b(ut|utah)\b/i.test(q) ? q : q + ", Utah");
+    const hit = await geocode(q);
+    if (hit?.choices) return showChoices(hit.choices);
+    if (hit?.needsTown) {
+      setStatus("Add the city or ZIP code. Utah street numbers like 4500 South repeat in every town (for example: 1234 E 4500 S, Holladay).", true);
+      return;
+    }
     if (!hit) {
-      setStatus("We couldn't find that address. Try adding the city, or tap the map instead.", true);
+      setStatus("We couldn't find that address. Check the spelling, try the city name or ZIP code instead, or tap your spot on the map.", true);
       return;
     }
     session("label:" + hit.lat.toFixed(5) + hit.lon.toFixed(5), hit.label);
@@ -171,6 +176,17 @@ form.addEventListener("submit", async (e) => {
     btn.disabled = false;
   }
 });
+
+// Several Utah towns have this address: let the person pick.
+function showChoices(list) {
+  status.classList.remove("error");
+  status.innerHTML = '<span>Which one?</span><span class="choice-list">' +
+    list.map((t) => `<button type="button" class="choice">${escapeHTML(t)}</button>`).join("") + "</span>";
+  status.querySelectorAll(".choice").forEach((b) => b.addEventListener("click", () => {
+    input.value = b.textContent;
+    form.requestSubmit();
+  }));
+}
 
 $("#locate").addEventListener("click", () => {
   if (!navigator.geolocation) return setStatus("Your browser can't share its location. Type an address instead.", true);

@@ -222,8 +222,14 @@ export async function designValues(lon, lat) {
 }
 
 // ---------- geocoding ----------
+//
+// Order: UGRC Web API (only if a key is configured) -> UGRC's open "Masquerade"
+// locator (Utah's own address points and road centerlines, no key needed) ->
+// OpenStreetMap Nominatim. If none matches, UGRC's suggestions become
+// "Did you mean...?" choices.
 
 const NOMINATIM = "https://nominatim.openstreetmap.org";
+const MASQUERADE = "https://masquerade.ugrc.utah.gov/arcgis/rest/services/UtahLocator/GeocodeServer";
 
 function shortLabel(addr, fallback) {
   if (!addr) return fallback;
@@ -232,46 +238,153 @@ function shortLabel(addr, fallback) {
   return [street, town].filter(Boolean).join(", ") || fallback;
 }
 
-/** Address -> {lon, lat, label, zip}. Uses UGRC when a key is configured. */
+// "350 N STATE ST, SALT LAKE CITY" -> "350 N State St, Salt Lake City"
+function tidy(label) {
+  const title = (s) => s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
+  const [street, ...rest] = label.split(",");
+  const words = street.trim().split(/\s+/).map((w) => (/^\d/.test(w) || /^[NSEW]$/.test(w) ? w : title(w)));
+  const town = title(rest.join(",").trim());
+  return town ? `${words.join(" ")}, ${town}` : words.join(" ");
+}
+
+// Cities whose names start with a compass word, so "...4500 S South Jordan"
+// isn't split after "South".
+const DIRECTION_CITIES = [
+  "north salt lake", "north ogden", "north logan", "south salt lake", "south jordan", "south ogden",
+  "south weber", "west valley city", "west valley", "west jordan", "west haven", "west point",
+  "west bountiful", "east carbon",
+];
+const STREET_END = /^(n|s|e|w|north|south|east|west|st|street|ave|avenue|rd|road|dr|drive|ln|lane|way|cir|circle|ct|court|blvd|boulevard|pl|place|pkwy|parkway|hwy|highway|ter|terrace|trl|trail|loop|cv|cove|row|sq|square|hollow|holw|run|rdg|ridge|xing|crossing|pt|point|bnd|bend|plz|plaza)\.?$/i;
+
+/**
+ * Split a typed Utah address into {street, city, zip}. Handles commas or none:
+ * "1234 east 4500 south holladay ut 84117" -> street "1234 east 4500 south",
+ * city "holladay", zip "84117".
+ */
+export function parseAddress(text) {
+  let rest = text.replace(/\s+/g, " ").replace(/,?\s*(usa|united states)\.?$/i, "").trim();
+  const zip = rest.match(/\b(\d{5})(?:-\d{4})?$/)?.[1] || null;
+  if (zip) rest = rest.slice(0, rest.lastIndexOf(zip)).trim();
+  rest = rest.replace(/[,\s]+(ut|utah)\.?$/i, "").replace(/,\s*$/, "").trim();
+
+  if (rest.includes(",")) {
+    const [street, ...city] = rest.split(",");
+    return { street: street.trim(), city: city.join(" ").trim() || null, zip };
+  }
+  const lower = rest.toLowerCase();
+  const known = DIRECTION_CITIES.find((c) => lower.endsWith(" " + c));
+  if (known) return { street: rest.slice(0, -known.length).trim(), city: rest.slice(-known.length), zip };
+
+  // Otherwise guess: the street ends at the last compass word or street
+  // type, and anything after it is the city. "whole" keeps the unsplit text
+  // in case the guess is wrong ("350 N State" is a street, not "350 N" in "State").
+  const words = rest.split(" ");
+  let cut = -1;
+  for (let i = 1; i < words.length; i++) if (STREET_END.test(words[i])) cut = i;
+  if (cut === -1 || cut === words.length - 1) return { street: rest, city: null, zip };
+  return { street: words.slice(0, cut + 1).join(" "), city: words.slice(cut + 1).join(" "), zip, whole: rest };
+}
+
+async function getJSON(url, ms = 12000) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, headers: { "Accept-Language": "en" } });
+    if (!r.ok) throw new Error(r.status);
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Address -> one of:
+ *   {lon, lat, label, zip, approximate}   a match
+ *   {choices: ["350 N STATE ST, OREM", ...]}   ambiguous; let the person pick
+ *   {needsTown: true}                      a street with no city or ZIP
+ *   null                                   nothing found
+ */
 export async function geocode(query) {
   const cfg = window.FL_CONFIG || {};
-  if (cfg.ugrcKey) {
-    const hit = await geocodeUGRC(query, cfg.ugrcKey).catch(() => null);
-    if (hit) return hit;
+  const parts = parseAddress(query);
+  const zones = [parts.zip, parts.city].filter(Boolean);
+  const hasNumber = /^\d+\s/.test(parts.street);
+  let reached = 0, tried = 0;
+  const attempt = async (fn) => {
+    tried++;
+    try { const v = await fn(); reached++; return v; } catch { return null; }
+  };
+
+  for (const zone of zones) {
+    const hit = (cfg.ugrcKey && await attempt(() => geocodeUGRC(parts.street, zone, cfg.ugrcKey))) ||
+      await attempt(() => geocodeMasquerade(`${parts.street}, ${zone}`));
+    if (hit) return { ...hit, zip: hit.zip || parts.zip };
   }
-  const url = `${NOMINATIM}/search?` + new URLSearchParams({
-    q: query, format: "jsonv2", addressdetails: "1", limit: "1", countrycodes: "us",
-    viewbox: `${UTAH.west},${UTAH.north},${UTAH.east},${UTAH.south}`, bounded: "1",
-  });
-  const r = await fetch(url, { headers: { "Accept-Language": "en" } });
-  if (!r.ok) throw new Error("geocoder " + r.status);
-  const [hit] = await r.json();
-  if (!hit) return null;
+
+  // Utah grid addresses repeat in every town, so with no city or ZIP, offer
+  // the matches UGRC knows about rather than guessing one. If the city was
+  // only a guess, treat the whole text as the street.
+  const noTown = !zones.length || (parts.whole && !parts.zip);
+  const street = parts.whole && !parts.zip ? parts.whole : parts.street;
+  const choices = hasNumber ? (await attempt(() => suggest(street))) || [] : [];
+  if (noTown && hasNumber && !parts.whole) return choices.length ? { choices } : { needsTown: true };
+  if (noTown && choices.length) return { choices };
+
+  // A landmark ("Liberty Park") or an address UGRC didn't recognize.
+  const osm = await attempt(() => geocodeNominatim(query));
+  if (osm && !osm.approximate) return osm;
+  if (choices.length) return { choices };
+  if (!osm && reached === 0 && tried > 0) throw new Error("No geocoder responded");
+  return osm;
+}
+
+async function geocodeMasquerade(singleLine) {
+  const d = await getJSON(`${MASQUERADE}/findAddressCandidates?` + new URLSearchParams({
+    SingleLine: singleLine, outSR: "4326", maxLocations: "1", f: "json",
+  }));
+  const c = d.candidates?.[0];
+  if (!c || c.score < 80) return null;
   return {
-    lon: +hit.lon, lat: +hit.lat,
-    label: shortLabel(hit.address, hit.display_name.split(",").slice(0, 2).join(",")),
-    zip: hit.address?.postcode?.slice(0, 5) || null,
-    approximate: !hit.address?.house_number,
+    lon: c.location.x, lat: c.location.y, label: tidy(c.address), zip: null,
+    approximate: c.score < 90,
   };
 }
 
-async function geocodeUGRC(query, apiKey) {
-  // UGRC wants street and zone (city or ZIP) separately, so we need either
-  // "123 Main St, Sandy" or a trailing ZIP. Anything else goes to Nominatim.
-  const parts = query.split(",").map((s) => s.trim());
-  const zip = query.match(/(\d{5})(?:-\d{4})?\s*$/)?.[1];
-  if (parts.length < 2 && !zip) return null;
-  const street = parts.length >= 2 ? parts[0] : query.replace(/\s*(UT|Utah)?\s*\d{5}(-\d{4})?\s*$/i, "");
-  const zone = zip || parts[1].replace(/\b(UT|Utah)\b/i, "").trim();
-  const url = `https://api.mapserv.utah.gov/api/v1/geocode/${encodeURIComponent(street)}/${encodeURIComponent(zone)}?` +
-    new URLSearchParams({ apiKey, spatialReference: "4326" });
-  const r = await fetch(url);
-  if (!r.ok) return null;
-  const res = (await r.json()).result;
+async function suggest(text) {
+  const d = await getJSON(`${MASQUERADE}/suggest?` + new URLSearchParams({ text, maxSuggestions: "6", f: "json" }), 8000);
+  // Only street addresses: the suggester also returns districts, cities and ZIPs.
+  return (d.suggestions || []).map((s) => s.text).filter((t) => /^\d/.test(t)).slice(0, 5).map(tidy);
+}
+
+async function geocodeNominatim(query) {
+  const q = /\b(ut|utah)\b/i.test(query) ? query : query + ", Utah";
+  const [hit] = await getJSON(`${NOMINATIM}/search?` + new URLSearchParams({
+    q, format: "jsonv2", addressdetails: "1", limit: "1", countrycodes: "us",
+    viewbox: `${UTAH.west},${UTAH.north},${UTAH.east},${UTAH.south}`, bounded: "1",
+  }));
+  if (!hit) return null;
+  const a = hit.address || {};
+  const town = a.city || a.town || a.village || a.hamlet || a.county;
+  // A street with no house number is "approximate"; a named place (a park, a
+  // school) is where it says it is.
+  const isStreet = hit.category === "highway";
+  return {
+    lon: +hit.lon, lat: +hit.lat,
+    label: hit.name && !a.house_number && !isStreet ? [hit.name, town].filter(Boolean).join(", ")
+      : shortLabel(a, hit.display_name.split(",").slice(0, 2).join(",")),
+    zip: a.postcode?.slice(0, 5) || null,
+    approximate: isStreet,
+  };
+}
+
+async function geocodeUGRC(street, zone, apiKey) {
+  const d = await getJSON(`https://api.mapserv.utah.gov/api/v1/geocode/${encodeURIComponent(street)}/${encodeURIComponent(zone)}?` +
+    new URLSearchParams({ apiKey, spatialReference: "4326" }));
+  const res = d.result;
   if (!res?.location) return null;
   return {
     lon: res.location.x, lat: res.location.y,
-    label: res.matchAddress?.replace(/,\s*\d{5}$/, "") || query,
+    label: tidy(res.matchAddress?.replace(/,\s*\d{5}$/, "") || street),
     zip: (res.matchAddress?.match(/\d{5}$/) || [null])[0],
     approximate: res.score < 80,
   };

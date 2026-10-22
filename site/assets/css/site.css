@@ -134,6 +134,9 @@ small, .small { font-size: .875rem; }
 .search-alt button { background: none; border: 0; padding: 4px 0; color: var(--brand); font: 600 .92rem var(--sans); cursor: pointer; text-decoration: underline; text-underline-offset: .15em; }
 .status { min-height: 1.5em; margin-top: 10px; font-size: .95rem; }
 .status.error { color: var(--accent); font-weight: 600; }
+.choice-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.choice { border: 1.5px solid var(--line); background: var(--surface); color: var(--brand); border-radius: 999px; padding: 6px 12px; font: 600 .9rem var(--sans); cursor: pointer; }
+.choice:hover { border-color: var(--brand); }
 
 /* ---------- Hero ---------- */
 .hero { padding: 40px 0 28px; }

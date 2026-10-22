@@ -43,7 +43,7 @@
           <tr><td>2020 Magna earthquake</td><td>U.S. Geological Survey, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/uu60363602/executive" target="_blank" rel="noopener">event page</a>: ShakeMap and Did You Feel It?</td><td>Copied to this site.</td></tr>
           <tr><td>Earthquake probabilities</td><td>Working Group on Utah Earthquake Probabilities (2016), UGS Miscellaneous Publication 16-3</td><td>Quoted.</td></tr>
           <tr><td>Basin research</td><td>Moschetti et al. (2021), <a href="https://doi.org/10.1785/0220200449" target="_blank" rel="noopener">SRL</a>; Pang et al. (2020), <a href="https://doi.org/10.1029/2020GL089798" target="_blank" rel="noopener">GRL</a></td><td>Summarized on the Magna page.</td></tr>
-          <tr><td>Address search</td><td><a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap Nominatim</a><span id="ugrc-note"></span></td><td>Turns an address into a map point.</td></tr>
+          <tr><td>Address search</td><td>Utah Geospatial Resource Center (UGRC) address locator, using the state's address points and road centerlines; <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap Nominatim</a> as a backup</td><td>Turns an address into a map point.</td></tr>
           <tr><td>Base map</td><td><a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>, © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>, data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></td><td>Background streets and places.</td></tr>
           <tr><td>Prep guidance</td><td><a href="https://beready.utah.gov/" target="_blank" rel="noopener">Be Ready Utah</a>; <a href="https://earthquakes.utah.gov/putting-down-roots/" target="_blank" rel="noopener">Putting Down Roots in Earthquake Country</a>; <a href="https://www.ready.gov/earthquakes" target="_blank" rel="noopener">Ready.gov</a></td><td>The basis for Make a Plan.</td></tr>
         </tbody>
@@ -54,7 +54,7 @@
     <h2 id="privacy">Privacy</h2>
     <ul>
       <li><strong>We don't save the addresses you look up.</strong> Your location stays in your browser's address bar after the <code>#</code>, a part browsers never send to a server.</li>
-      <li>To turn an address into a map point, your search text goes to the address-search service listed above. To get building-code values, a rounded location (about 100 m) goes to the USGS. The base map loads tiles for the area you're viewing.</li>
+      <li>To turn an address into a map point, your search text goes to UGRC's address locator, and to OpenStreetMap if UGRC can't find it. To get building-code values, a rounded location (about 100 m) goes to the USGS. The base map loads tiles for the area you're viewing.</li>
       <li>Fault, liquefaction, and Magna results are computed in your browser from files on this site, so those lookups send your location to no one.</li>
       <li>Make a Plan keeps your answers and checkmarks in this browser only. "Start over" erases them.</li>
       <li>No ads, no tracking cookies, no analytics that identify you.</li>
@@ -76,8 +76,6 @@
     var c = document.getElementById("contact");
     c.href = "mailto:" + cfg.contactEmail;
     c.textContent = cfg.contactEmail;
-    if (cfg.ugrcKey) document.getElementById("ugrc-note").innerHTML =
-      ' and the <a href="https://gis.utah.gov/" target="_blank" rel="noopener">Utah Geospatial Resource Center</a> geocoder';
     fetch("/data/build_info.json").then(function (r) { return r.json(); }).then(function (b) {
       document.getElementById("built").textContent = "Data copied to this site on " +
         new Date(b.built + "T12:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) + ".";

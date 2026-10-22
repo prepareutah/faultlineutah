@@ -1,7 +1,9 @@
 // Site settings the project manager can change without touching other code.
 window.FL_CONFIG = {
-  // Free key from https://developer.mapserv.utah.gov (UGRC, Utah's own
-  // address geocoder). Leave empty to use OpenStreetMap's Nominatim instead.
+  // Optional free key from https://developer.mapserv.utah.gov (UGRC Web API).
+  // Without it, address search uses UGRC's open "Masquerade" locator (same
+  // state address data, no key), then OpenStreetMap as a backup. A key is the
+  // right long-term choice if traffic grows.
   ugrcKey: "",
 
   // Newsletter signup. Paste the provider's form "action" URL here

@@ -47,7 +47,7 @@ Each content file has instructions at the top. Text between quotes can be edited
 
 ## Settings (`site/assets/js/config.js`)
 
-- `ugrcKey`: free API key for Utah's own address geocoder (see to-do list). Much better at Utah grid addresses than the fallback.
+- `ugrcKey`: optional free key for UGRC's Web API. Address search already uses UGRC's open locator without one; a key is the long-term choice if traffic grows.
 - `newsletterAction`: the signup form URL from your newsletter provider. Empty shows "coming soon."
 - `basinNoteEnabled`: keep `false` until a seismologist has reviewed the basin bands and wording.
 - `contactEmail`: shown on About.
@@ -89,7 +89,7 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 **Accounts and setup**
 - [x] Register **faultlineutah.com** (GoDaddy, Oct 22, 2026). Consider faultlineutah.org too.
 - [ ] Point GoDaddy DNS at GitHub Pages (table above), then turn on Enforce HTTPS.
-- [ ] Get a free **UGRC API key** at https://developer.mapserv.utah.gov and paste it into `config.js`. Restrict it to faultlineutah.com in the UGRC dashboard.
+- [ ] Optional: get a free **UGRC API key** at https://developer.mapserv.utah.gov, restrict it to faultlineutah.com, and paste it into `config.js`. Worth doing before any big media push. Or email UGRC to confirm they're happy for a public site to use their open Masquerade locator.
 - [ ] Choose a newsletter provider (Buttondown, Substack, Ghost) and paste its form URL into `config.js`.
 - [ ] Set up the `hello@faultlineutah.com` mailbox, or change `contactEmail`.
 - [x] Host: GitHub Pages, deploying automatically from GitHub.
@@ -103,7 +103,7 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 - [ ] UGS hazard layers (faults, rupture zones, liquefaction): confirm terms of use and preferred attribution.
 - [ ] USGS (Magna data, design values): public domain; attribution is already shown.
 - [ ] Basemap: OpenFreeMap is free with OpenStreetMap attribution (already shown).
-- [ ] Nominatim geocoding is fine for light use only (about 1 request per second); switching to the UGRC key covers launch traffic.
+- [ ] Address search: UGRC's open Masquerade locator first, then OpenStreetMap Nominatim (light use only, about 1 request per second).
 
 **Content to add**
 - [ ] Your illustrations for "Is It Brick?" (the brick diagrams are placeholders drawn in code).
@@ -113,5 +113,5 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 ## Known limits
 
 - **Liquefaction uses two maps.** The newer 1:24,000 UGS susceptibility map comes first, but it doesn't yet cover much of the central Salt Lake Valley. There, the site falls back to UGS's 1994 regional liquefaction-potential maps (digitized by UGRC, CC BY 4.0), and the result card says it's an older, less detailed map. UGRC doesn't publish that layer's code legend; the codes come from the Mountainland Association of Governments' copy of the layer, cross-checked against Utah DEM and Utah County copies and known places (Utah Lake, Antelope Island, the Kennecott tailings). Ask the seismologist advisor to confirm this approach.
-- **Address search** uses OpenStreetMap until the UGRC key is added, and OSM lacks many Utah house numbers. Results show "approximate match" when that happens.
+- **Address search** needs a city or ZIP for grid addresses ("1234 E 4500 S" exists in many towns); without one it offers matching towns or asks. Addresses UGRC can't place fall back to OpenStreetMap, and a street-only match is labeled "approximate."
 - Know Your Ground covers Utah only; outside the state it says so.
