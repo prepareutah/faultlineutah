@@ -60,23 +60,39 @@ python3 scripts/build_data.py
 
 It takes about a minute. Run it every few months, or whenever UGS announces updated fault or hazard maps. The About page shows the date automatically.
 
-## Publish it
+## Publishing (GitHub Pages)
 
-Any static host works. Two good free options:
+The code lives in a public GitHub repository (see `git remote -v`). **Every push to `main` republishes the site** within a minute or two, through `.github/workflows/pages.yml`, which uploads the `site/` folder. Watch deploys under the repo's **Actions** tab.
 
-- **Cloudflare Pages** or **Netlify**: create a project, choose "deploy without Git / drag and drop," and upload the `site` folder. Build command: none. Output folder: `site`.
-- Then add the custom domain `faultlineutah.com` in the host's dashboard and follow its DNS instructions at your domain registrar.
+```bash
+git add -A
+git commit -m "Describe the change"
+git push
+```
 
-HTTPS is required for "use my location" to work; both hosts provide it automatically.
+**Git and iCloud.** This folder is in iCloud Drive, which corrupts Git's internal files if it syncs them. So Git's database lives outside iCloud at `~/.git-repos/faultlineutah.git`, and the `.git` here is a one-line pointer to it. Git works normally on this Mac. On another computer, clone from GitHub instead of opening this iCloud folder. iCloud also sometimes makes conflict copies named like `file 2.json`; `.gitignore` keeps those out of commits, and they're safe to delete.
+
+**Domain.** faultlineutah.com is registered at GoDaddy. Its DNS points at GitHub Pages:
+
+| Type | Name | Value |
+|---|---|---|
+| A | @ | 185.199.108.153 |
+| A | @ | 185.199.109.153 |
+| A | @ | 185.199.110.153 |
+| A | @ | 185.199.111.153 |
+| CNAME | www | the account's `<name>.github.io` address (Settings → Pages shows it) |
+
+HTTPS is required for "use my location" to work. GitHub issues the certificate automatically once DNS is in place; then turn on **Enforce HTTPS** under the repo's Settings → Pages.
 
 ## To-do before public launch (project manager)
 
 **Accounts and setup**
-- [ ] Register **faultlineutah.com** (it was unregistered as of Oct 22, 2026). Consider faultlineutah.org too.
+- [x] Register **faultlineutah.com** (GoDaddy, Oct 22, 2026). Consider faultlineutah.org too.
+- [ ] Point GoDaddy DNS at GitHub Pages (table above), then turn on Enforce HTTPS.
 - [ ] Get a free **UGRC API key** at https://developer.mapserv.utah.gov and paste it into `config.js`. Restrict it to faultlineutah.com in the UGRC dashboard.
 - [ ] Choose a newsletter provider (Buttondown, Substack, Ghost) and paste its form URL into `config.js`.
 - [ ] Set up the `hello@faultlineutah.com` mailbox, or change `contactEmail`.
-- [ ] Pick a host (Cloudflare Pages or Netlify) and publish.
+- [x] Host: GitHub Pages, deploying automatically from GitHub.
 
 **Expert review** (product plan §4.5: nothing on basin effects goes public before a seismologist reviews it)
 - [ ] Seismologist: the wording in `content/ground-text.js`; the Magna page's fault and basin sections; the 43% / M6.75 / 50-year figure; the "about 90 times the energy" comparison; the Wasatch section table on `faults.html`; and which ASCE 7 edition to show (the site uses ASCE 7-22 with the default site class).
