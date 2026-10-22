@@ -82,13 +82,13 @@ git push
 | A | @ | 185.199.111.153 |
 | CNAME | www | the account's `<name>.github.io` address (Settings → Pages shows it) |
 
-HTTPS is required for "use my location" to work. GitHub issues the certificate automatically once DNS is in place; then turn on **Enforce HTTPS** under the repo's Settings → Pages.
+HTTPS is required for "use my location" to work. GitHub issues the certificate automatically once DNS is in place; **Enforce HTTPS** is on under the repo's Settings → Pages. If DNS is ever changed and the certificate stalls, remove the custom domain in Settings → Pages and add it back about an hour after the DNS change (once old DNS caches expire); that's what got the first certificate issued.
 
 ## To-do before public launch (project manager)
 
 **Accounts and setup**
 - [x] Register **faultlineutah.com** (GoDaddy, Oct 22, 2026). Consider faultlineutah.org too.
-- [ ] Point GoDaddy DNS at GitHub Pages (table above), then turn on Enforce HTTPS.
+- [x] Point GoDaddy DNS at GitHub Pages (table above), then turn on Enforce HTTPS (done Oct 22, 2026).
 - [ ] Optional: get a free **UGRC API key** at https://developer.mapserv.utah.gov, restrict it to faultlineutah.com, and paste it into `config.js`. Worth doing before any big media push. Or email UGRC to confirm they're happy for a public site to use their open Masquerade locator.
 - [ ] Choose a newsletter provider (Buttondown, Substack, Ghost) and paste its form URL into `config.js`.
 - [ ] Set up the `hello@faultlineutah.com` mailbox, or change `contactEmail`.
