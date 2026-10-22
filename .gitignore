@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+Icon?
+
+# Python
+__pycache__/
+*.pyc
+
+# Local editor/agent settings
+.claude/
+
+# iCloud Drive conflict copies ("file 2.json")
+* [0-9].*

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About &amp; Sources · FaultLine Utah</title>
+<meta name="description" content="How FaultLine Utah works, where every piece of data comes from, how we handle your privacy, and what this site is and isn't.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/about.html">
+<meta property="og:url" content="https://faultlineutah.com/about.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap article">
+  <div class="read">
+    <h1>About FaultLine Utah</h1>
+    <p>Utah's earthquake information is good, but it's scattered across a half-dozen agencies, each speaking its own technical language. FaultLine Utah gathers the most useful parts, translates them into plain language for a specific address, and turns them into a short list of things to do.</p>
+    <p>We don't run our own hazard models. We present published, authoritative results from the Utah Geological Survey and the U.S. Geological Survey, and every result links to its source.</p>
+
+    <h2>Our rules</h2>
+    <ol>
+      <li><strong>Translate, don't invent.</strong> We explain what the experts have published. We don't make new predictions.</li>
+      <li><strong>Every claim has a source.</strong> Each result card says where it came from.</li>
+      <li><strong>Bands, not false precision.</strong> Where the science is uncertain, we use plain categories, with the numbers one tap away under "Show the science."</li>
+      <li><strong>Experts review the science.</strong> We're recruiting a seismologist and a structural engineer to review this site's science and building guidance. Some features, like basin depth by address, stay off until they have.</li>
+    </ol>
+
+    <h2 id="sources">Sources and dates</h2>
+    <p id="built" class="muted small"></p>
+    <div class="table-scroll">
+      <table class="simple">
+        <thead><tr><th>What</th><th>Source</th><th>How we use it</th></tr></thead>
+        <tbody>
+          <tr><td>Fault lines</td><td>Utah Geological Survey, <a href="https://geology.utah.gov/apps/qfaults/" target="_blank" rel="noopener">Utah Quaternary Fault and Fold Database</a></td><td>Copied to this site; distances are computed in your browser.</td></tr>
+          <tr><td>Fault rupture study zones</td><td>Utah Geological Survey, surface-fault-rupture special study zones (<a href="https://geology.utah.gov/apps/hazards/" target="_blank" rel="noopener">Geologic Hazards Portal</a>)</td><td>Copied to this site.</td></tr>
+          <tr><td>Liquefaction</td><td>Utah Geological Survey, liquefaction susceptibility (<a href="https://geology.utah.gov/apps/hazards/" target="_blank" rel="noopener">Geologic Hazards Portal</a>)</td><td>Copied to this site. Used first wherever it has data.</td></tr>
+          <tr><td>Liquefaction (older)</td><td>Utah Geological Survey 1994 liquefaction-potential maps for Box Elder, Cache, Davis, Salt Lake, Utah and Weber counties, digitized by the <a href="https://gis.utah.gov/" target="_blank" rel="noopener">Utah Geospatial Resource Center</a>, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></td><td>Copied to this site. Used only where the newer map has no data, and labeled as older. Ranges such as "low to moderate" are scored at the higher end.</td></tr>
+          <tr><td>Building-code shaking</td><td>U.S. Geological Survey, <a href="https://earthquake.usgs.gov/ws/designmaps/" target="_blank" rel="noopener">Seismic Design web services</a> (ASCE 7-22)</td><td>Asked live, with the location rounded to about 100 m.</td></tr>
+          <tr><td>2020 Magna earthquake</td><td>U.S. Geological Survey, <a href="https://earthquake.usgs.gov/earthquakes/eventpage/uu60363602/executive" target="_blank" rel="noopener">event page</a>: ShakeMap and Did You Feel It?</td><td>Copied to this site.</td></tr>
+          <tr><td>Earthquake probabilities</td><td>Working Group on Utah Earthquake Probabilities (2016), UGS Miscellaneous Publication 16-3</td><td>Quoted.</td></tr>
+          <tr><td>Basin research</td><td>Moschetti et al. (2021), <a href="https://doi.org/10.1785/0220200449" target="_blank" rel="noopener">SRL</a>; Pang et al. (2020), <a href="https://doi.org/10.1029/2020GL089798" target="_blank" rel="noopener">GRL</a></td><td>Summarized on the Magna page.</td></tr>
+          <tr><td>Address search</td><td><a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap Nominatim</a><span id="ugrc-note"></span></td><td>Turns an address into a map point.</td></tr>
+          <tr><td>Base map</td><td><a href="https://openfreemap.org/" target="_blank" rel="noopener">OpenFreeMap</a>, © <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener">OpenMapTiles</a>, data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></td><td>Background streets and places.</td></tr>
+          <tr><td>Prep guidance</td><td><a href="https://beready.utah.gov/" target="_blank" rel="noopener">Be Ready Utah</a>; <a href="https://earthquakes.utah.gov/putting-down-roots/" target="_blank" rel="noopener">Putting Down Roots in Earthquake Country</a>; <a href="https://www.ready.gov/earthquakes" target="_blank" rel="noopener">Ready.gov</a></td><td>The basis for Make a Plan.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted">Hazard maps show what's been mapped, at the scale it was mapped (most UGS hazard maps are 1:24,000). Conditions on a single property can differ. Where a map has no data, that means no one has mapped it, not that there's no hazard.</p>
+
+    <h2 id="privacy">Privacy</h2>
+    <ul>
+      <li><strong>We don't save the addresses you look up.</strong> Your location stays in your browser's address bar after the <code>#</code>, a part browsers never send to a server.</li>
+      <li>To turn an address into a map point, your search text goes to the address-search service listed above. To get building-code values, a rounded location (about 100 m) goes to the USGS. The base map loads tiles for the area you're viewing.</li>
+      <li>Fault, liquefaction, and Magna results are computed in your browser from files on this site, so those lookups send your location to no one.</li>
+      <li>Make a Plan keeps your answers and checkmarks in this browser only. "Start over" erases them.</li>
+      <li>No ads, no tracking cookies, no analytics that identify you.</li>
+    </ul>
+
+    <h2 id="disclaimer">What this site is, and isn't</h2>
+    <p><strong>FaultLine Utah is for education and preparedness only.</strong> It is not an engineering assessment, inspection, insurance determination, real-estate disclosure, or earthquake prediction. Talk to a licensed structural or geotechnical engineer about any specific building or site.</p>
+    <p><strong>Utah does not have a public earthquake early warning system yet</strong>, and this site never sends alerts. For emergencies, call 911. For official guidance, follow <a href="https://beready.utah.gov/" target="_blank" rel="noopener">Be Ready Utah</a> and your city or county emergency manager.</p>
+
+    <h2>Contact</h2>
+    <p>Corrections, partnership ideas, or questions: <a id="contact" href="#"></a></p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script>
+  (function () {
+    var cfg = window.FL_CONFIG || {};
+    var c = document.getElementById("contact");
+    c.href = "mailto:" + cfg.contactEmail;
+    c.textContent = cfg.contactEmail;
+    if (cfg.ugrcKey) document.getElementById("ugrc-note").innerHTML =
+      ' and the <a href="https://gis.utah.gov/" target="_blank" rel="noopener">Utah Geospatial Resource Center</a> geocoder';
+    fetch("/data/build_info.json").then(function (r) { return r.json(); }).then(function (b) {
+      document.getElementById("built").textContent = "Data copied to this site on " +
+        new Date(b.built + "T12:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) + ".";
+    }).catch(function () {});
+  })();
+</script>
+</body>
+</html>

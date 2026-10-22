@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Make a Plan · FaultLine Utah</title>
+<meta name="description" content="Answer six questions and get an earthquake prep list for your Utah home, in priority order: this weekend, this month, and bigger projects.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/plan.html">
+<meta property="og:url" content="https://faultlineutah.com/plan.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap article">
+  <div class="read">
+    <h1 class="no-print">Make a Plan</h1>
+    <p class="no-print">Six quick questions, then a prep list in priority order. Start with the top. The first tier prevents the most injuries and costs almost nothing.</p>
+    <div id="hazard-note" class="no-print"></div>
+
+    <form id="quiz" class="quiz" onsubmit="return false"></form>
+
+    <div class="plan-out">
+      <div class="no-print" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center">
+        <h2 style="margin:0">Your list</h2>
+        <div style="display:flex;gap:8px">
+          <button class="btn" type="button" id="print">Save as PDF / print</button>
+          <button class="btn secondary" type="button" id="reset">Start over</button>
+        </div>
+      </div>
+      <div id="plan"></div>
+    </div>
+
+    <p class="small muted" style="margin-top:28px">Based on guidance from <a href="https://beready.utah.gov/utah-hazards/earthquakes/" target="_blank" rel="noopener">Be Ready Utah</a>,
+      <a href="https://earthquakes.utah.gov/putting-down-roots/" target="_blank" rel="noopener">Putting Down Roots in Earthquake Country</a>, and
+      <a href="https://www.ready.gov/earthquakes" target="_blank" rel="noopener">Ready.gov</a>. Your answers stay in this browser.
+      For education and preparedness only. It doesn't replace advice from a licensed engineer about your building.</p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script type="module" src="/assets/js/plan.js"></script>
+</body>
+</html>

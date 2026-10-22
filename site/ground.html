@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Know Your Ground · FaultLine Utah</title>
+<meta name="description" content="Type a Utah address and get a plain-language picture of the earthquake hazards there: nearby faults, liquefaction, building-code shaking, and what the 2020 Magna earthquake did.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/ground.html">
+<meta property="og:url" content="https://faultlineutah.com/ground.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap">
+  <div class="ground-layout">
+    <div class="search-col">
+      <h1>Know Your Ground</h1>
+      <p class="muted" style="margin-bottom:14px">Earthquake hazards for any Utah address, in plain language. Checked against Utah Geological Survey and USGS data.</p>
+      <form id="lookup" class="search" role="search" autocomplete="on">
+        <label class="skip" for="address">Street address</label>
+        <input id="address" name="address" type="search" placeholder="Street address, city" autocomplete="street-address" enterkeyhint="search" required>
+        <button class="btn" type="submit">Look it up</button>
+      </form>
+      <div class="search-alt">
+        <span>or</span>
+        <button type="button" id="locate">use my location</button>
+        <span>·</span>
+        <button type="button" id="tapmap">tap the map</button>
+      </div>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="map-col">
+      <div id="map" class="map" role="region" aria-label="Hazard map. Tap a spot to look it up."></div>
+      <div id="legend" class="legend"></div>
+    </div>
+
+    <div class="results-col" id="results" aria-live="polite">
+      <div class="card">
+        <h3>What you'll see</h3>
+        <ul style="margin:0;padding-left:1.2em">
+          <li><strong>Fault lines:</strong> how far the nearest young, active fault is, and whether you're in a fault study zone.</li>
+          <li><strong>Liquefaction:</strong> whether the soil is the kind that can turn soft in strong shaking.</li>
+          <li><strong>Building-code shaking:</strong> what new buildings here are designed to withstand.</li>
+          <li><strong>What Magna did here:</strong> how the 2020 M5.7 earthquake was felt nearby.</li>
+        </ul>
+        <p class="small muted" style="margin:12px 0 0">Your address isn't saved or sent to us. See <a href="/about.html#privacy">privacy</a>.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script type="module" src="/assets/js/ground.js"></script>
+</body>
+</html>

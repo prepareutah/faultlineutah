@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FaultLine Utah · Living on the Fault</title>
+<meta name="description" content="Plain-language earthquake information for Utah. Look up the faults, liquefaction, and shaking at your address, then build a prep plan that fits your home.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/">
+<meta property="og:url" content="https://faultlineutah.com/">
+<meta property="og:title" content="FaultLine Utah · Living on the Fault">
+<meta property="og:description" content="Know the ground you live on. Earthquake hazards for any Utah address, in plain language.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap">
+      <div class="kicker">Living on the Fault</div>
+      <h1>Know the ground you live on.</h1>
+      <p class="lede">Most Utahns live within a few miles of the Wasatch fault. FaultLine Utah turns the science about your address into plain language, then helps you get ready.</p>
+
+      <div class="hero-card">
+        <h2>Know Your Ground</h2>
+        <form id="home-lookup" class="search" role="search">
+          <label class="skip" for="home-address">Street address</label>
+          <input id="home-address" type="search" placeholder="Street address, city" autocomplete="street-address" enterkeyhint="search" required>
+          <button class="btn" type="submit">Look it up</button>
+        </form>
+        <div class="search-alt"><a href="/ground.html">or explore the map</a><span>·</span><span>Your address isn't saved.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid">
+        <a class="card link" href="/ground.html">
+          <h3>Know Your Ground</h3>
+          <p>Nearby faults, liquefaction, building-code shaking, and what the 2020 Magna quake did at your address.</p>
+          <span class="go">Look up an address →</span>
+        </a>
+        <a class="card link" href="/plan.html">
+          <h3>Make a Plan</h3>
+          <p>Answer six questions and get a prep list in priority order: what to do this weekend, this month, and later.</p>
+          <span class="go">Build your list →</span>
+        </a>
+        <a class="card link" href="/brick.html">
+          <h3>Is It Brick?</h3>
+          <p>Unreinforced brick buildings are Utah's biggest earthquake risk. Learn the signs and what to do about them.</p>
+          <span class="go">Check your building →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band alt">
+    <div class="wrap">
+      <h2 style="margin-top:0">The short version</h2>
+      <div class="grid">
+        <div class="card">
+          <p style="font:600 2.4rem/1 var(--serif);margin:0 0 8px;color:var(--accent)">43%</p>
+          <p>Chance of a magnitude 6.75 or larger earthquake in the Wasatch Front region in the next 50 years.</p>
+          <p class="cite">Working Group on Utah Earthquake Probabilities, 2016</p>
+        </div>
+        <div class="card">
+          <p style="font:600 2.4rem/1 var(--serif);margin:0 0 8px;color:var(--accent)">140,000+</p>
+          <p>Unreinforced masonry (brick) buildings in Utah, by state and FEMA estimates. Most are homes.</p>
+          <p class="cite">FEMA; Utah Seismic Safety Commission (estimate)</p>
+        </div>
+        <div class="card">
+          <p style="font:600 2.4rem/1 var(--serif);margin:0 0 8px;color:var(--accent)">No</p>
+          <p>Utah doesn't have a public earthquake early warning system yet. When it shakes, your preparation is the warning.</p>
+          <p class="cite">Utah Geological Survey, 2025</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="grid">
+        <div class="read">
+          <h2 style="margin-top:0">Magna was a warning shot</h2>
+          <p>On March 18, 2020, a magnitude 5.7 earthquake rattled the Salt Lake Valley. It broke old brick, knocked out power, and gave scientists thousands of new recordings. What they learned about the valley's deep sediments changes how we think about the big one.</p>
+          <a class="btn secondary" href="/magna.html">Read the Magna story</a>
+        </div>
+        <div class="read">
+          <h2 style="margin-top:0">Explore Utah's fault lines</h2>
+          <p>The Wasatch fault runs about 220 miles from southern Idaho to central Utah, along the foot of the mountains most of us look at every day. See it, and every other mapped fault, on one map.</p>
+          <a class="btn secondary" href="/faults.html">Open the fault map</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div id="site-footer"></div>
+<script>
+  document.getElementById("home-lookup").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var q = document.getElementById("home-address").value.trim();
+    // The address rides in the #fragment, which browsers never send to a server.
+    if (q) location.href = "/ground.html#q=" + encodeURIComponent(q);
+  });
+</script>
+</body>
+</html>

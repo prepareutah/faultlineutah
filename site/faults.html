@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fault Lines · FaultLine Utah</title>
+<meta name="description" content="A map of every mapped young fault in Utah, from the Utah Geological Survey, with a plain-language guide to the Wasatch fault and its sections.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/faults.html">
+<meta property="og:url" content="https://faultlineutah.com/faults.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap article">
+  <h1>Fault Lines</h1>
+  <p class="read">Every fault the Utah Geological Survey has mapped as active in the last 2.6 million years. Tap a fault to learn about it. Zoom in to see liquefaction and fault-rupture study zones, or tap anywhere else to look up that spot.</p>
+
+  <div id="map" class="map tall" role="region" aria-label="Map of Utah's faults"></div>
+  <div id="legend" class="legend"></div>
+
+  <div class="read">
+    <h2>The Wasatch fault in a minute</h2>
+    <p>The Wasatch fault zone runs about 220 miles from Malad City, Idaho, to Fayette, Utah. It's a <strong>normal fault</strong>: the valley drops down and the mountains rise, a few meters at a time, in large earthquakes thousands of years apart. That's how the Wasatch Range got so tall and the valleys so deep.</p>
+    <p>The fault breaks in pieces called <strong>sections</strong>, each of which tends to rupture on its own. The six central sections show repeated large earthquakes in the last several thousand years:</p>
+    <div class="table-scroll">
+      <table class="simple">
+        <thead><tr><th>Section</th><th>Runs along</th></tr></thead>
+        <tbody>
+          <tr><td>Brigham City</td><td>Brigham City to near Ogden</td></tr>
+          <tr><td>Weber</td><td>Ogden, Layton, Bountiful area</td></tr>
+          <tr><td>Salt Lake City</td><td>The east bench of the Salt Lake Valley, from North Salt Lake to Draper</td></tr>
+          <tr><td>Provo</td><td>Utah Valley, from Alpine to Spanish Fork and Payson</td></tr>
+          <tr><td>Nephi</td><td>Santaquin to Nephi</td></tr>
+          <tr><td>Levan</td><td>South of Nephi</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="cite">Section names and extents follow the Utah Geological Survey's Quaternary Fault and Fold Database. Community descriptions are approximate; tap the map for the mapped trace.</p>
+
+    <h2>Not just the Wasatch</h2>
+    <p>The <strong>West Valley fault zone</strong> (the Granger and Taylorsville faults) cuts across the middle of the Salt Lake Valley and likely moves together with the Salt Lake City section. Utah's largest recorded earthquake, a magnitude 6.6 in <strong>1934 in Hansel Valley</strong>, north of the Great Salt Lake, broke the ground surface. Southern Utah has its own active faults, including the Hurricane fault.</p>
+
+    <h2>Reading the colors</h2>
+    <p>Faults are colored by how recently they've moved. Red faults have moved in the last 15,000 years, which in geologic time is yesterday. Those are the ones scientists watch most closely. An older fault isn't necessarily safe; it may just have a longer gap between earthquakes, or less study.</p>
+    <p><a class="btn" href="/ground.html">Look up your address</a></p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script type="module">
+  import { hazardMap, legendHTML } from "/assets/js/map.js";
+  hazardMap(document.getElementById("map"), {
+    center: [-111.9, 40.6], zoom: 7.2,
+    onPick: (lon, lat) => { location.href = `/ground.html#@${lat.toFixed(5)},${lon.toFixed(5)}`; },
+  });
+  document.getElementById("legend").innerHTML = legendHTML();
+</script>
+</body>
+</html>

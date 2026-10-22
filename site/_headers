@@ -1,0 +1,13 @@
+# Read by Cloudflare Pages and Netlify. Not served as a page.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(), microphone=()
+
+# Hazard data changes only when scripts/build_data.py is re-run.
+/data/*
+  Cache-Control: public, max-age=86400
+
+/assets/*
+  Cache-Control: public, max-age=3600

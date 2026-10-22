@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Magna 2020 · FaultLine Utah</title>
+<meta name="description" content="The March 18, 2020 Magna earthquake, and what scientists learned from it about the Wasatch fault and the Salt Lake Valley's deep sediments.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/magna.html">
+<meta property="og:url" content="https://faultlineutah.com/magna.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+<style>
+  .stat { font: 600 2rem/1 var(--serif); color: var(--accent); margin: 0 0 6px; }
+  .basin-fig text { font: 12px var(--sans); fill: var(--ink); }
+  .basin-fig .rock { fill: var(--muted); opacity: .35; }
+  .basin-fig .sed { fill: var(--lvl-2); opacity: .45; }
+  .basin-fig .wave { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+  .basin-fig .fault { stroke: var(--ink); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+</style>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap article">
+  <div class="read">
+    <p class="small muted" style="margin:0 0 6px">March 18, 2020 · 7:09 a.m.</p>
+    <h1>Magna was a warning shot</h1>
+    <p>On a Wednesday morning in the first week of pandemic shutdowns, a magnitude 5.7 earthquake struck about 7 miles below the ground just northeast of Magna, on the west side of the Salt Lake Valley. It was Utah's strongest earthquake in nearly 30 years.</p>
+    <p>Older brick buildings and chimneys took the worst of it. Power went out across the valley. Nobody died, but it was a small, close look at what a much larger Wasatch earthquake would mean.</p>
+  </div>
+
+  <div class="grid" style="margin:22px 0">
+    <div class="card"><p class="stat">M5.7</p><p>Magnitude, about 12 km (7 mi) deep.</p></div>
+    <div class="card"><p class="stat">26,376</p><p>People who told the USGS "Did You Feel It?" what they felt.</p></div>
+    <div class="card"><p class="stat">887</p><p>Aftershocks of magnitude 1 or larger recorded nearby by the end of 2020, including two M4.6 the same day.</p></div>
+  </div>
+
+  <div class="read">
+    <p><a class="btn" href="/ground.html">See what Magna did at your address</a></p>
+
+    <h2 id="fault">What it revealed about the fault</h2>
+    <p>The Wasatch fault is easy to see at the surface: it's the straight, steep edge where the mountains meet the valley. What it does deep underground is harder to know.</p>
+    <p>Magna's mainshock didn't break the surface. Its seismic waves showed it slipped on a fault <strong>dipping west at a gentle angle of about 30 to 35 degrees, 9 to 12 km down</strong>. That fits a long-standing idea that the Wasatch fault flattens as it goes deeper, curving under the valley like the inside of a spoon. Geologists call that shape <em>listric</em>.</p>
+    <p>If that's right, more of the valley sits above the fault surface than a steeper fault would put there, and some research suggests shaking in Salt Lake City could be stronger than earlier estimates. This is an active research question, not settled science.</p>
+    <p class="cite">Pang, G., et al. (2020). Geophysical Research Letters. <a href="https://doi.org/10.1029/2020GL089798" target="_blank" rel="noopener">doi:10.1029/2020GL089798</a></p>
+
+    <h2 id="basin">What it revealed about the basin</h2>
+    <p>The Salt Lake Valley is a deep bowl of rock filled with thousands of feet of softer sediment: old lake beds from Lake Bonneville, sand, gravel, and clay. Seismic waves slow down and grow taller when they move from hard rock into soft sediment, and they can bounce around inside the bowl.</p>
+
+    <figure class="fig">
+      <svg class="basin-fig" viewBox="0 0 560 220" role="img" aria-label="Cross-section: waves grow larger over deep sediment in the middle of the valley than at its rocky edges">
+        <path class="rock" d="M0 220 V60 L70 70 L120 90 C200 200 360 205 440 95 L500 60 L560 50 V220 Z"/>
+        <path class="sed" d="M120 90 C200 200 360 205 440 95 Z"/>
+        <path class="fault" d="M445 92 C420 140 380 175 300 200"/>
+        <path class="wave" d="M30 50 q8 -6 16 0 t16 0 t16 0"/>
+        <path class="wave" d="M240 70 q12 -26 24 0 t24 0 t24 0 t24 0"/>
+        <path class="wave" d="M500 40 q8 -6 16 0 t16 0"/>
+        <text x="12" y="30">Thin sediment / rock</text>
+        <text x="215" y="32">Deep basin sediment</text>
+        <text x="215" y="47" style="fill:var(--accent);font-weight:600">bigger, slower shaking</text>
+        <text x="455" y="30">Wasatch Range</text>
+        <text x="320" y="214" style="font-size:11px">fault flattening at depth (?)</text>
+      </svg>
+      <figcaption>Not to scale. A simplified picture of why deep-basin sites can shake longer and harder at slow, rolling periods.</figcaption>
+    </figure>
+
+    <p>After Magna, USGS scientists studied <strong>more than 3,000 recordings from 59 Utah earthquakes</strong>, Magna among them. Sites sitting on deep basin sediment shook roughly <strong>3 to 10 times more</strong> than thin-sediment sites at long periods, about one second and slower. That's the slow, rolling motion that sways taller buildings, very roughly ten stories and up, along with bridges and pipelines.</p>
+    <p>The 2023 USGS National Seismic Hazard Model now includes basin-specific data for Salt Lake City. Building-code values usually lag the newest hazard model by several years.</p>
+
+    <div class="notice info">
+      <p><strong>What we won't do:</strong> multiply your address's shaking by "3 to 10." That range compares groups of sites across many recordings. It isn't a forecast for any single building. We're working with seismologists on an honest way to show basin depth by address, and we won't publish it until they've reviewed it.</p>
+    </div>
+    <p class="cite">Moschetti, M. P., et al. (2021). Seismological Research Letters 92(6). <a href="https://doi.org/10.1785/0220200449" target="_blank" rel="noopener">doi:10.1785/0220200449</a> ·
+      USGS, <a href="https://www.usgs.gov/programs/earthquake-hazards/science/2023-50-state-long-term-national-seismic-hazard-model" target="_blank" rel="noopener">2023 50-State National Seismic Hazard Model</a></p>
+
+    <h2>Magna vs. the big one</h2>
+    <p>Each step up the magnitude scale releases about 32 times more energy. A magnitude 7 on the Salt Lake City section of the Wasatch fault, the kind of earthquake geologists find evidence for in trenches across the valley, would release <strong>roughly 90 times more energy than Magna</strong>. It could break the ground surface along the fault, and it would shake much longer and harder across the whole valley.</p>
+    <p>Scientists estimate a <strong>43% chance</strong> of a magnitude 6.75 or larger earthquake in the Wasatch Front region in the next 50 years. That's not a countdown. It's a reason to do the inexpensive things now.</p>
+    <p class="cite">Working Group on Utah Earthquake Probabilities (2016), Utah Geological Survey Miscellaneous Publication 16-3.</p>
+
+    <h2>What to do with this</h2>
+    <ul>
+      <li><a href="/ground.html">Look up your address</a> to see what Magna did there and what the ground is like.</li>
+      <li><a href="/plan.html">Make a plan</a>. The first tier takes a weekend and costs almost nothing.</li>
+      <li><a href="/brick.html">Check whether your building is brick.</a></li>
+    </ul>
+
+    <p class="cite" style="margin-top:28px">Event facts: USGS <a href="https://earthquake.usgs.gov/earthquakes/eventpage/uu60363602/executive" target="_blank" rel="noopener">M5.7 Magna event page</a> and the USGS ComCat earthquake catalog (aftershocks within 20 km, through December 31, 2020).</p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+</body>
+</html>
