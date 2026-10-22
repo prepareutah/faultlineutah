@@ -51,7 +51,12 @@ const LAYER_GROUPS = {
   faults: ["overview", "faults-halo", "faults", "overview-hit", "faults-hit"],
   liq: ["liq94", "liq"],
   sfr: ["sfr"],
+  magna: ["magna-casing", "magna-lines", "magna-labels", "magna-epi"],
 };
+
+// USGS ShakeMap colors for the whole-number intensity contours we keep.
+const MAGNA_MMI = [[3, "weak", "#a0e5ff"], [4, "light", "#80ffff"], [5, "moderate", "#7cff90"], [6, "strong", "#ffff00"]];
+const ROMAN = { 3: "III", 4: "IV", 5: "V", 6: "VI" };
 
 function keyHTML() {
   const sw = (c, cls = "sw") => `<i class="${cls}" style="--c:${c}"></i>`;
@@ -65,10 +70,13 @@ function keyHTML() {
         <p class="key-sub">Colored by when they last moved</p><ul>${faults}</ul></section>
       <section class="needs-zoom"><label class="key-head"><input type="checkbox" data-layer="liq" checked>Liquefaction</label>
         <button type="button" class="zoom-hint">Zoom in to see</button>
-        <ul class="key-grid">${liq}</ul><p class="key-sub">Paler shading: older 1994 map</p></section>
+        <ul class="key-grid">${liq}</ul><p class="key-sub">Paler shading: 1994 regional map</p></section>
       <section class="needs-zoom"><label class="key-head"><input type="checkbox" data-layer="sfr" checked>${sw("var(--accent)")}Fault study zones</label>
         <p class="key-sub">Where the ground could break along a fault</p>
         <button type="button" class="zoom-hint">Zoom in to see</button></section>
+      <section><label class="key-head"><input type="checkbox" data-layer="magna">Magna 2020 shaking</label>
+        <p class="key-sub">How strongly the M5.7 shook, from the USGS ShakeMap</p>
+        <ul class="key-grid">${MAGNA_MMI.map(([v, word, c]) => `<li>${sw(c, "ln")}${ROMAN[v]} ${word}</li>`).join("")}</ul></section>
     </div>`;
 }
 
@@ -147,7 +155,7 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
     compact: true,
     customAttribution: 'Hazards: <a href="https://geology.utah.gov/">Utah Geological Survey</a>',
   }));
-  const shown = { faults: true, liq: true, sfr: true };
+  const shown = { faults: true, liq: true, sfr: true, magna: false };
   function applyVisibility(group) {
     for (const id of LAYER_GROUPS[group]) {
       if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", shown[group] ? "visible" : "none");
@@ -213,6 +221,25 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
       paint: { "line-color": css("--surface"), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 3, 15, 7], "line-opacity": 0.7 } }, underLabels);
     map.addLayer({ id: "faults", type: "line", source: "faults", minzoom: FAULT_ZOOM,
       paint: { "line-color": faultColor(), "line-width": ["interpolate", ["linear"], ["zoom"], 9, 1.5, 15, 4] } }, underLabels);
+    // Magna 2020 (off until switched on in the key): intensity contours + epicenter.
+    map.addSource("magna", { type: "geojson", data: empty() });
+    map.addSource("magna-epi", { type: "geojson", data: empty() });
+    loadJSON("/magna/cont_mmi.json").then((fc) => map.getSource("magna")?.setData(fc));
+    loadJSON("/magna/event.json").then((ev) => map.getSource("magna-epi")?.setData({
+      type: "Feature", geometry: { type: "Point", coordinates: [ev.lon, ev.lat] }, properties: {},
+    }));
+    // A dark outline keeps the pale USGS colors readable on the light basemap.
+    map.addLayer({ id: "magna-casing", type: "line", source: "magna",
+      paint: { "line-color": "#1e2a32", "line-width": 4.5, "line-opacity": 0.45 } }, underLabels);
+    map.addLayer({ id: "magna-lines", type: "line", source: "magna",
+      paint: { "line-color": ["get", "color"], "line-width": 2.5, "line-opacity": 0.9, "line-dasharray": [3, 1.5] } }, underLabels);
+    map.addLayer({ id: "magna-labels", type: "symbol", source: "magna",
+      layout: { "symbol-placement": "line", "text-field": ["match", ["get", "mmi"], 3, "III", 4, "IV", 5, "V", 6, "VI", ""],
+        "text-font": ["Noto Sans Bold"], "text-size": 12, "symbol-spacing": 220 },
+      paint: { "text-color": css("--ink"), "text-halo-color": css("--surface"), "text-halo-width": 2 } });
+    map.addLayer({ id: "magna-epi", type: "circle", source: "magna-epi",
+      paint: { "circle-radius": 7, "circle-color": css("--accent"), "circle-stroke-color": "#fff", "circle-stroke-width": 2 } });
+
     // Invisible, finger-width copies of the fault lines so they're easy to tap.
     map.addLayer({ id: "overview-hit", type: "line", source: "overview", maxzoom: FAULT_ZOOM,
       paint: { "line-color": "#000", "line-opacity": 0, "line-width": 14 } });

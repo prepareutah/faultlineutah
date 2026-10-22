@@ -141,8 +141,9 @@ const CHANCE_1994 = {
   1: "less than 5%", 2: "up to 10%", 3: "5 to 10%", 4: "5 to 50%",
   5: "10 to 50%", 6: "10% to more than 50%", 7: "more than 50%",
 };
-const OLDER_MAP = "<p class=\"muted\">This comes from regional maps published in 1994. They're less detailed than the Utah Geological Survey's newer maps, " +
-  "which haven't reached this area yet. Treat it as a neighborhood-level picture, not a property-level one.</p>";
+const OLDER_MAP = "<p class=\"muted\">This comes from the 1994 regional liquefaction maps, which are still the most recent maps covering most of the Wasatch Front. " +
+  "The Utah Geological Survey's newer, more detailed mapping so far covers only a few areas on the Salt Lake Valley's west side. " +
+  "Treat this as a neighborhood-level picture, not a property-level one.</p>";
 
 function liquefaction1994Card(liq, what) {
   const source = "Utah Geological Survey 1994 liquefaction-potential maps, digitized by the " +
@@ -160,10 +161,12 @@ function liquefaction1994Card(liq, what) {
   }
   return {
     level: liq.level, pill: liq.label,
-    headline: `${liq.label} liquefaction potential here, on an older regional map.`,
+    headline: `${liq.label} liquefaction potential here, on the regional map.`,
     body: what + (liq.level >= 3 ? LIQ_HELPS : LIQ_LOWER) + OLDER_MAP,
     science: `<p>1994 map class: <strong>${liq.label}</strong>. The 1994 maps put the chance of ground shaking strong enough to cause liquefaction here, in any 100 years, at ${CHANCE_1994[liq.code]}. ` +
-      "Where the map gives a range (such as \"low to moderate\"), this site scores it at the higher end.</p>",
+      "Where the map gives a range (such as \"low to moderate\"), this site scores it at the higher end.</p>" +
+      "<p>A newer probabilistic model by UDOT and the USGS (Franke and Bartlett, UDOT report UT-20.22, 2020) covers the four central Wasatch Front counties " +
+      "and can differ from these 1994 classes. It isn't shown here yet.</p>",
     source,
   };
 }

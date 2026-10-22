@@ -351,6 +351,23 @@ def build_magna():
     size = write("magna/dyfi_zip.json", zips)
     print("  dyfi_zip.json %d ZIPs, %.0f KB" % (len(zips), size / 1024))
 
+    # ShakeMap intensity contours, whole-number levels only, for the map layer.
+    cont = get_json(shakemap["download/cont_mmi.json"]["url"])
+    lines = []
+    for f in cont["features"]:
+        v = f["properties"]["value"]
+        if v != int(v):
+            continue
+        geom = f["geometry"]
+        parts = geom["coordinates"] if geom["type"] == "MultiLineString" else [geom["coordinates"]]
+        lines.append({
+            "type": "Feature",
+            "geometry": {"type": "MultiLineString", "coordinates": [[[round(x, 4), round(y, 4)] for x, y, *_ in p] for p in parts]},
+            "properties": {"mmi": int(v), "color": f["properties"]["color"]},
+        })
+    size = write("magna/cont_mmi.json", {"type": "FeatureCollection", "features": lines})
+    print("  cont_mmi.json %d contours, %.0f KB" % (len(lines), size / 1024))
+
     lon, lat, depth = ev["geometry"]["coordinates"]
     write("magna/event.json", {
         "mag": props["mag"], "time": props["time"], "lon": lon, "lat": lat, "depth_km": depth,

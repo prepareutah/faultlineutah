@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Make a Plan · FaultLine Utah</title>
-<meta name="description" content="Answer six questions and get an earthquake prep list for your Utah home, in priority order: this weekend, this month, and bigger projects.">
+<meta name="description" content="Build an earthquake plan for your Utah household: a prioritized to-do list, a supply list with amounts for 3 days to 3 months, and a household plan sheet, as a PDF.">
 <meta name="theme-color" content="#1b4d5c">
 <link rel="canonical" href="https://faultlineutah.com/plan.html">
 <meta property="og:url" content="https://faultlineutah.com/plan.html">
@@ -16,28 +16,63 @@
 <div id="site-header"></div><script src="/assets/js/layout.js"></script>
 
 <main id="main" class="wrap article">
-  <div class="read">
-    <h1 class="no-print">Make a Plan</h1>
-    <p class="no-print">Six quick questions, then a prep list in priority order. Start with the top. The first tier prevents the most injuries and costs almost nothing.</p>
-    <div id="hazard-note" class="no-print"></div>
+  <div class="plan-page">
+    <h1>Make a Plan</h1>
+    <p class="lede-sm">Tell us a little about your household and how long you want to be ready for. You'll get a to-do list in priority order, a supply list with amounts, and a household plan sheet, all in one PDF.</p>
+    <div id="hazard-note"></div>
 
-    <form id="quiz" class="quiz" onsubmit="return false"></form>
+    <section class="plan-step">
+      <h2><span class="step-n">1</span> How long do you want to be ready for?</h2>
+      <div id="duration" class="durations" role="radiogroup" aria-label="How long to prepare for"></div>
+    </section>
 
-    <div class="plan-out">
-      <div class="no-print" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center">
-        <h2 style="margin:0">Your list</h2>
-        <div style="display:flex;gap:8px">
-          <button class="btn" type="button" id="print">Save as PDF / print</button>
-          <button class="btn secondary" type="button" id="reset">Start over</button>
-        </div>
+    <section class="plan-step">
+      <h2><span class="step-n">2</span> Who's in your household?</h2>
+      <div id="counts" class="counts"></div>
+    </section>
+
+    <section class="plan-step">
+      <h2><span class="step-n">3</span> About your home</h2>
+      <form id="quiz" class="quiz" onsubmit="return false"></form>
+    </section>
+
+    <div class="plan-bar">
+      <div>
+        <h2>Your plan</h2>
+        <div id="tuned" class="tags" aria-label="Your plan is tuned for"></div>
       </div>
-      <div id="plan"></div>
+      <div class="plan-actions">
+        <button class="btn" type="button" id="pdf">Download PDF</button>
+        <button class="btn secondary" type="button" id="reset">Start over</button>
+      </div>
+      <p id="pdf-status" class="status error" role="status"></p>
     </div>
 
+    <nav class="plan-tabs" aria-label="Plan sections">
+      <a href="#actions">To-do list</a><a href="#supplies">Supply list</a><a href="#sheet">Household plan</a>
+    </nav>
+
+    <section id="actions" class="plan-section">
+      <h2>To-do list</h2>
+      <div id="actions-body"></div>
+    </section>
+
+    <section id="supplies" class="plan-section">
+      <h2>Supply list</h2>
+      <div id="supplies-body"></div>
+    </section>
+
+    <section id="sheet" class="plan-section">
+      <h2>Household plan</h2>
+      <p class="muted">Fill this in together. It's saved only in this browser and included in your PDF. Give a copy to your out-of-state contact.</p>
+      <div id="sheet-body" class="sheet"></div>
+    </section>
+
     <p class="small muted" style="margin-top:28px">Based on guidance from <a href="https://beready.utah.gov/utah-hazards/earthquakes/" target="_blank" rel="noopener">Be Ready Utah</a>,
-      <a href="https://earthquakes.utah.gov/putting-down-roots/" target="_blank" rel="noopener">Putting Down Roots in Earthquake Country</a>, and
-      <a href="https://www.ready.gov/earthquakes" target="_blank" rel="noopener">Ready.gov</a>. Your answers stay in this browser.
-      For education and preparedness only. It doesn't replace advice from a licensed engineer about your building.</p>
+      <a href="https://earthquakes.utah.gov/putting-down-roots/" target="_blank" rel="noopener">Putting Down Roots in Earthquake Country</a>,
+      <a href="https://www.ready.gov/earthquakes" target="_blank" rel="noopener">Ready.gov</a>, and the
+      <a href="https://www.cdc.gov/water-emergency/about/index.html" target="_blank" rel="noopener">CDC</a>.
+      Your answers stay in this browser. For education and preparedness only; it doesn't replace advice from a licensed engineer about your building.</p>
   </div>
 </main>
 
