@@ -19,10 +19,9 @@
 
 <main id="main" class="wrap article">
   <h1>Fault Lines</h1>
-  <p class="read">Every fault the Utah Geological Survey has mapped as active in the last 2.6 million years. Tap a fault to learn about it. Zoom in to see liquefaction and fault-rupture study zones, or tap anywhere else to look up that spot.</p>
+  <p class="read">Every fault the Utah Geological Survey has mapped as active in the last 2.6 million years. Tap a fault to learn about it, or tap anywhere else to look up that spot. Use the map key to switch layers on and off.</p>
 
-  <div id="map" class="map tall" role="region" aria-label="Map of Utah's faults"></div>
-  <div id="legend" class="legend"></div>
+  <div id="map" class="map" role="region" aria-label="Map of Utah's faults"></div>
 
   <div class="read">
     <h2>The Wasatch fault in a minute</h2>
@@ -54,12 +53,11 @@
 
 <div id="site-footer"></div>
 <script type="module">
-  import { hazardMap, legendHTML } from "/assets/js/map.js";
+  import { hazardMap } from "/assets/js/map.js";
   hazardMap(document.getElementById("map"), {
     center: [-111.9, 40.6], zoom: 7.2,
     onPick: (lon, lat) => { location.href = `/ground.html#@${lat.toFixed(5)},${lon.toFixed(5)}`; },
   });
-  document.getElementById("legend").innerHTML = legendHTML();
 </script>
 </body>
 </html>

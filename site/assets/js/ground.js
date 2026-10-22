@@ -7,7 +7,7 @@ import {
   inUtah, geocode, reverseGeocode, nearestFaults, inFaultRuptureZone,
   liquefactionAt, magnaAt, designValues,
 } from "./geo.js";
-import { hazardMap, legendHTML } from "./map.js";
+import { hazardMap } from "./map.js";
 import { faultCard, liquefactionCard, designCard, magnaCard, basinTeaser } from "./content/ground-text.js";
 
 const $ = (s) => document.querySelector(s);
@@ -25,18 +25,18 @@ const ICONS = {
   magna: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12h3l2-6 3 12 3-9 2 5 2-2h5"/></svg>',
 };
 
+// [id, card title, short name for the at-a-glance row]
 const CARDS = [
-  ["fault", "Fault lines"],
-  ["liq", "Liquefaction (the ground)"],
-  ["design", "Building-code shaking"],
-  ["magna", "What Magna did here"],
+  ["fault", "Fault lines", "Nearest fault"],
+  ["liq", "Liquefaction (the ground)", "Liquefaction"],
+  ["design", "Building-code shaking", "Code shaking"],
+  ["magna", "What Magna did here", "Magna 2020"],
 ];
 
 const { map, setPin } = hazardMap($("#map"), {
   center: [-111.93, 40.68], zoom: 9.3,
   onPick: (lon, lat) => run(lon, lat),
 });
-$("#legend").innerHTML = legendHTML();
 
 function setStatus(msg, isError = false) {
   status.textContent = msg;
@@ -63,6 +63,17 @@ function fillCard(id, c) {
   el.querySelector(".body").outerHTML = `${meter}<div class="body">${c.body}</div>` +
     (c.science ? `<details class="science"><summary>Show the science</summary><div class="sci">${c.science}</div></details>` : "") +
     `<p class="source">Source: ${c.source}</p>`;
+  const tile = $(`#glance-${id}`);
+  if (tile) {
+    tile.className = `lvl-${lvl}`;
+    tile.querySelector(".g-v").textContent = c.pill;
+  }
+}
+
+function glanceRow() {
+  return '<nav class="glance" aria-label="Results at a glance">' +
+    CARDS.map(([cid, , short]) => `<a href="#card-${cid}" id="glance-${cid}"><span class="g-t">${short}</span><span class="g-v">…</span></a>`).join("") +
+    "</nav>";
 }
 
 function failCard(id, what) {
@@ -90,6 +101,7 @@ async function run(lon, lat, known = {}) {
   results.innerHTML =
     `<h2 class="place">${escapeHTML(label)}</h2>` +
     `<p class="place-sub">${lat.toFixed(4)}°N, ${Math.abs(lon).toFixed(4)}°W${known.approximate ? " · approximate match, check the pin on the map" : ""}</p>` +
+    glanceRow() +
     CARDS.map(([cid, title]) => cardShell(cid, title)).join("") +
     (inBox(lon, lat, WASATCH_FRONT) ? `<div class="notice info" id="basin">${basinTeaser}</div>` : "") +
     nextSteps() +
@@ -187,6 +199,13 @@ function showChoices(list) {
     form.requestSubmit();
   }));
 }
+
+results.addEventListener("click", (e) => {
+  const a = e.target.closest(".glance a");
+  if (!a) return;
+  e.preventDefault();
+  $(a.getAttribute("href"))?.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
 $("#locate").addEventListener("click", () => {
   if (!navigator.geolocation) return setStatus("Your browser can't share its location. Type an address instead.", true);

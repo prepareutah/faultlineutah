@@ -46,6 +46,94 @@ function liqColor() {
 
 const empty = () => ({ type: "FeatureCollection", features: [] });
 
+// Map layers switched together by each checkbox in the key.
+const LAYER_GROUPS = {
+  faults: ["overview", "faults-halo", "faults", "overview-hit", "faults-hit"],
+  liq: ["liq94", "liq"],
+  sfr: ["sfr"],
+};
+
+function keyHTML() {
+  const sw = (c, cls = "sw") => `<i class="${cls}" style="--c:${c}"></i>`;
+  const faults = FAULT_AGES.map(([, label], i) =>
+    `<li>${sw(`var(--lvl-${4 - i})`, "ln")}${label.replace("Moved in the last", "Last")}</li>`).join("");
+  const liq = ["Very low", "Low", "Moderate", "High", "Very high"].map((l, i) =>
+    `<li>${sw(`var(--lvl-${i})`)}${l}</li>`).join("");
+  return `<button type="button" class="key-toggle" aria-expanded="true">Map key</button>
+    <div class="key-body">
+      <section><label class="key-head"><input type="checkbox" data-layer="faults" checked>Faults</label>
+        <p class="key-sub">Colored by when they last moved</p><ul>${faults}</ul></section>
+      <section class="needs-zoom"><label class="key-head"><input type="checkbox" data-layer="liq" checked>Liquefaction</label>
+        <button type="button" class="zoom-hint">Zoom in to see</button>
+        <ul class="key-grid">${liq}</ul><p class="key-sub">Paler shading: older 1994 map</p></section>
+      <section class="needs-zoom"><label class="key-head"><input type="checkbox" data-layer="sfr" checked>${sw("var(--accent)")}Fault study zones</label>
+        <p class="key-sub">Where the ground could break along a fault</p>
+        <button type="button" class="zoom-hint">Zoom in to see</button></section>
+    </div>`;
+}
+
+// The key lives inside the map (top-left), so it stays visible while
+// scrolling and in full screen. Open by default when the map has room.
+class KeyControl {
+  constructor({ onToggle, onZoomIn }) {
+    this.onToggle = onToggle;
+    this.onZoomIn = onZoomIn;
+  }
+
+  onAdd(map) {
+    const el = document.createElement("div");
+    el.className = "maplibregl-ctrl map-key";
+    el.innerHTML = keyHTML();
+    const toggle = el.querySelector(".key-toggle");
+    const setOpen = (open) => {
+      el.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+    };
+    // The map's own size isn't settled yet when controls are added, so go by the screen.
+    setOpen(innerWidth >= 700);
+    toggle.addEventListener("click", () => setOpen(!el.classList.contains("open")));
+    el.addEventListener("change", (e) => e.target.dataset.layer && this.onToggle(e.target.dataset.layer, e.target.checked));
+    el.querySelectorAll(".zoom-hint").forEach((b) => b.addEventListener("click", this.onZoomIn));
+    // Keep scrolling and taps inside the key from moving the map.
+    for (const t of ["wheel", "mousedown", "touchstart", "dblclick"]) el.addEventListener(t, (e) => e.stopPropagation(), { passive: true });
+    const update = () => el.classList.toggle("zoomed-out", map.getZoom() < DETAIL_ZOOM);
+    map.on("zoom", update);
+    update();
+    this.el = el;
+    return el;
+  }
+
+  onRemove() {
+    this.el.remove();
+  }
+}
+
+// "Back to my spot": appears once there's a pin, and flies back to it.
+class PinControl {
+  constructor(getPin) {
+    this.getPin = getPin;
+  }
+
+  onAdd(map) {
+    const el = document.createElement("div");
+    el.className = "maplibregl-ctrl maplibregl-ctrl-group pin-ctrl";
+    el.hidden = true;
+    el.innerHTML = '<button type="button" title="Back to my spot" aria-label="Back to my spot">' +
+      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+      '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></button>';
+    el.querySelector("button").addEventListener("click", () => {
+      const p = this.getPin();
+      if (p) map.flyTo({ center: p.getLngLat(), zoom: Math.max(map.getZoom(), 13) });
+    });
+    this.el = el;
+    return el;
+  }
+
+  onRemove() {
+    this.el.remove();
+  }
+}
+
 export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive = true, onPick } = {}) {
   const map = new maplibregl.Map({
     container: el,
@@ -59,7 +147,38 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
     compact: true,
     customAttribution: 'Hazards: <a href="https://geology.utah.gov/">Utah Geological Survey</a>',
   }));
-  if (interactive) map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+  const shown = { faults: true, liq: true, sfr: true };
+  function applyVisibility(group) {
+    for (const id of LAYER_GROUPS[group]) {
+      if (map.getLayer(id)) map.setLayoutProperty(id, "visibility", shown[group] ? "visible" : "none");
+    }
+  }
+  let pin = null;
+  const pinControl = new PinControl(() => pin);
+  if (interactive) {
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(new maplibregl.FullscreenControl(), "top-right");
+    map.addControl(pinControl, "top-right");
+    map.addControl(new KeyControl({
+      onToggle: (group, on) => {
+        shown[group] = on;
+        applyVisibility(group);
+      },
+      onZoomIn: () => map.easeTo({ zoom: DETAIL_ZOOM + 0.5 }),
+    }), "top-left");
+  }
+  // On phones, start the credits folded behind their (i) button so they don't
+  // cover a third of the map. Tapping (i) shows them.
+  // MapLibre expands them once, when the credit text first arrives.
+  const attrib = el.querySelector(".maplibregl-ctrl-attrib");
+  if (innerWidth < 700 && attrib) {
+    const fold = new MutationObserver(() => {
+      if (!attrib.classList.contains("maplibregl-compact-show")) return;
+      attrib.classList.remove("maplibregl-compact-show");
+      fold.disconnect();
+    });
+    fold.observe(attrib, { attributes: true, attributeFilter: ["class"] });
+  }
   el.flMap = map; // handy for debugging from the browser console
 
   const loaded = { liq: new Map(), liq94: new Map(), sfr: new Map(), faults: new Map() };
@@ -99,6 +218,7 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
       paint: { "line-color": "#000", "line-opacity": 0, "line-width": 14 } });
     map.addLayer({ id: "faults-hit", type: "line", source: "faults", minzoom: FAULT_ZOOM,
       paint: { "line-color": "#000", "line-opacity": 0, "line-width": 16 } });
+    for (const group of Object.keys(LAYER_GROUPS)) applyVisibility(group);
     refreshSources();
     loadVisible();
   }
@@ -188,7 +308,6 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
     });
   }
 
-  let pin = null;
   function setPin(lon, lat, { fly = true, zoom: z = 13 } = {}) {
     if (!pin) {
       const dot = document.createElement("div");
@@ -197,20 +316,9 @@ export function hazardMap(el, { center = [-111.89, 40.7], zoom = 9, interactive 
       pin = new maplibregl.Marker({ element: dot });
     }
     pin.setLngLat([lon, lat]).addTo(map);
+    if (pinControl.el) pinControl.el.hidden = false;
     if (fly) map.jumpTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), z) });
   }
 
   return { map, setPin };
-}
-
-/** Legend markup for a page. kind: "faults" | "all". */
-export function legendHTML(kind = "all") {
-  const faults = FAULT_AGES.map(([, label], i) =>
-    `<span><i class="line" style="background:var(--lvl-${4 - i})"></i>${label}</span>`).join("");
-  if (kind === "faults") return faults;
-  const liq = ["Very Low", "Low", "Moderate", "High", "Very High"].map((l, i) =>
-    `<span><i style="background:var(--lvl-${i});opacity:.6"></i>${l}</span>`).join("");
-  return `<div><strong>Faults</strong> ${faults}</div>` +
-    `<div><strong>Liquefaction</strong> (zoom in) ${liq} <span>Paler shading: older 1994 regional map</span></div>` +
-    `<div><span><i style="background:var(--accent);opacity:.4"></i>Fault rupture study zone (zoom in)</span></div>`;
 }

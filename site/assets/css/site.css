@@ -74,6 +74,7 @@ small, .small { font-size: .875rem; }
 .skip:focus { left: 16px; top: 8px; z-index: 100; background: var(--surface); padding: 8px 12px; }
 
 .wrap { max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+.wrap.wide { max-width: 86rem; }
 .read { max-width: var(--read); }
 
 /* ---------- Header ---------- */
@@ -167,11 +168,25 @@ section.band.alt { background: var(--surface-2); }
 .results-col { grid-area: results; min-width: 0; }
 .search-col h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); margin-bottom: .2em; }
 @media (min-width: 980px) {
-  .ground-layout { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-areas: "search map" "results map"; grid-template-rows: auto 1fr; }
+  /* Results get a comfortable reading width; the map takes the rest. */
+  .ground-layout { grid-template-columns: minmax(0, 33rem) minmax(0, 1fr); gap: 24px; grid-template-areas: "search map" "results map"; grid-template-rows: auto 1fr; }
   .ground-layout .map-col { position: sticky; top: 76px; align-self: start; }
+  .ground-layout .map { max-height: calc(100vh - 96px); }
 }
 .place { margin: 0 0 4px; font-family: var(--serif); font-size: 1.5rem; }
 .place-sub { color: var(--muted); margin: 0 0 14px; font-size: .95rem; }
+
+/* At-a-glance row: one tile per result card, tap to jump to it. */
+.glance { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; }
+@media (min-width: 560px) { .glance { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.glance a { display: block; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); text-decoration: none; border-top: 4px solid var(--line); }
+.glance a:hover { border-color: var(--brand); }
+.glance a.lvl-0 { border-top-color: var(--lvl-0); } .glance a.lvl-1 { border-top-color: var(--lvl-1); }
+.glance a.lvl-2 { border-top-color: var(--lvl-2); } .glance a.lvl-3 { border-top-color: var(--lvl-3); }
+.glance a.lvl-4 { border-top-color: var(--lvl-4); } .glance a.lvl-none { border-top-color: var(--lvl-none); }
+.glance .g-t { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.glance .g-v { display: block; font-weight: 700; margin-top: 2px; line-height: 1.25; }
+.result { scroll-margin-top: 80px; }
 .result { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; }
 .result header { display: flex; align-items: flex-start; gap: 12px; }
 .result .icon { flex: none; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--surface-2); color: var(--ink); }
@@ -208,16 +223,34 @@ details.science dd { margin: 0; }
 .next-steps { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); margin-top: 16px; }
 
 /* ---------- Map ---------- */
-.map { height: 360px; border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; background: var(--surface-2); }
-@media (min-width: 980px) { .map { height: calc(100vh - 160px); min-height: 480px; } }
-.map.tall { height: 70vh; min-height: 420px; }
-.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .82rem; color: var(--muted); margin: 10px 2px 0; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.legend i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
-.legend i.line { height: 3px; width: 18px; }
+/* A big square that never runs taller than the screen. */
+.map { width: 100%; aspect-ratio: 1 / 1; max-height: calc(100vh - 110px); min-height: 320px; border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; background: var(--surface-2); }
 .maplibregl-popup-content { background: var(--surface) !important; color: var(--ink); border-radius: 10px !important; font: .9rem/1.45 var(--sans); padding: 10px 14px !important; }
 .maplibregl-popup-tip { border-top-color: var(--surface) !important; border-bottom-color: var(--surface) !important; }
 .maplibregl-ctrl-attrib { font-size: 11px; }
+.pin-ctrl[hidden] { display: none; }
+.pin-ctrl button { display: grid; place-items: center; color: #333; }
+
+/* Map key: a collapsible panel inside the map's top-left corner. */
+.map-key { background: color-mix(in srgb, var(--surface) 94%, transparent); color: var(--ink); border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--line); font: .8rem/1.35 var(--sans); width: 15rem; max-width: calc(100vw - 110px); }
+.map-key .key-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 12px; background: none; border: 0; color: var(--ink); font: 700 .74rem var(--sans); letter-spacing: .08em; text-transform: uppercase; cursor: pointer; }
+.map-key .key-toggle::after { content: "▾"; font-size: .9rem; transition: transform .15s; }
+.map-key:not(.open) .key-toggle::after { transform: rotate(-90deg); }
+.map-key:not(.open) .key-body { display: none; }
+/* On phones the map is about as tall as the screen is wide, so cap the key by that. */
+.map-key .key-body { padding: 0 12px 10px; max-height: min(26rem, 55vh, calc(100vw - 150px)); overflow-y: auto; }
+.map-key section + section { border-top: 1px solid var(--line); margin-top: 8px; padding-top: 8px; }
+.map-key .key-head { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: .86rem; cursor: pointer; }
+.map-key .key-head input { accent-color: var(--brand); width: 16px; height: 16px; margin: 0; }
+.map-key ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 4px; }
+.map-key ul.key-grid { grid-template-columns: 1fr 1fr; column-gap: 8px; }
+.map-key li { display: flex; align-items: center; gap: 8px; }
+.map-key i.sw { width: 14px; height: 12px; border-radius: 3px; background: var(--c); opacity: .8; flex: none; }
+.map-key i.ln { width: 20px; height: 4px; border-radius: 2px; background: var(--c); flex: none; }
+.map-key .key-sub { margin: 3px 0 0; color: var(--muted); font-size: .74rem; }
+.map-key .zoom-hint { display: none; margin: 5px 0 0; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--brand); background: var(--brand-soft); color: var(--brand); font: 600 .74rem var(--sans); cursor: pointer; }
+.map-key.zoomed-out .zoom-hint { display: inline-block; }
+.map-key.zoomed-out .needs-zoom ul, .map-key.zoomed-out .needs-zoom .key-sub { opacity: .45; }
 
 /* ---------- Checklist ---------- */
 .quiz { display: grid; gap: 14px; }
