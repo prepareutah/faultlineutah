@@ -15,6 +15,14 @@ migrate(answers);
 const done = new Set(saved.done || []);
 const have = new Set(saved.have || []);
 const sheet = saved.sheet || {};
+// When the person last changed something (not just opened the page).
+let savedAt = saved.savedAt || null;
+// Returning = they changed something before. (Every visit stores the defaults,
+// so stored answers alone don't count; pre-timestamp saves count if they hold
+// a real answer, checkmark, or note.)
+const DEFAULT_KEYS = ["days", "adults", "kids", "babies", "dogs", "cats", "hazard"];
+const returning = !!savedAt || !!(saved.done?.length || saved.have?.length || Object.values(saved.sheet || {}).some(Boolean) ||
+  Object.keys(saved.answers || {}).some((k) => !DEFAULT_KEYS.includes(k)));
 
 // Hazard flags arrive from Know Your Ground as #fault=..&zone=..&liq=..
 const fromLookup = {};
@@ -25,9 +33,10 @@ const h = () => answers.hazard || {};
 function load() {
   try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch { return {}; }
 }
-function save() {
+function save(touch = true) {
+  if (touch) savedAt = Date.now();
   try {
-    localStorage.setItem(STORE, JSON.stringify({ answers, done: [...done], have: [...have], sheet }));
+    localStorage.setItem(STORE, JSON.stringify({ answers, done: [...done], have: [...have], sheet, savedAt }));
   } catch { /* fine */ }
 }
 // Answers saved by the first version of this page used one "people" list.
@@ -220,17 +229,36 @@ document.addEventListener("click", (e) => {
   renderPlan();
 });
 
-$("#reset").addEventListener("click", () => {
-  if (!confirm("Clear your answers, checkmarks, and plan sheet?")) return;
+// Saved progress is easy to forget about, so say so when someone comes back.
+function renderWelcome() {
+  const el = $("#saved-note");
+  if (!returning) return;
+  const parts = ["your answers"];
+  if (done.size) parts.push(plural(done.size, "checked task"));
+  if (have.size) parts.push(plural(have.size, "supply", "supplies") + " on hand");
+  if (Object.values(sheet).some(Boolean)) parts.push("your household plan sheet");
+  const list = parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1] : parts[0];
+  const when = savedAt ? ` (last changed ${new Date(savedAt).toLocaleString("en-US", { month: "long", day: "numeric", hour: "numeric", minute: "2-digit" })})` : "";
+  el.innerHTML = `<div class="notice info welcome"><p><strong>Welcome back.</strong> ${list[0].toUpperCase() + list.slice(1)} are saved in this browser on this device${when}. ` +
+    'Nothing is stored on our servers, and your other devices keep their own copy.</p>' +
+    '<button class="btn secondary" type="button" id="start-fresh">Start fresh</button></div>';
+  $("#start-fresh").addEventListener("click", startFresh);
+}
+
+function startFresh() {
+  if (!confirm("Clear your answers, checkmarks, and plan sheet on this device?")) return;
   for (const k of Object.keys(answers)) delete answers[k];
   Object.assign(answers, { days: 14, adults: 1, kids: 0, babies: 0, dogs: 0, cats: 0 });
   done.clear();
   have.clear();
   for (const k of Object.keys(sheet)) delete sheet[k];
   history.replaceState(null, "", location.pathname);
-  save();
+  savedAt = null;
+  try { localStorage.removeItem(STORE); } catch { /* fine */ }
   renderAll();
-});
+  $("#saved-note").innerHTML = "";
+}
+$("#reset").addEventListener("click", startFresh);
 
 // ------------------------------------------------------------------- PDF
 
@@ -282,5 +310,6 @@ $("#pdf").addEventListener("click", async () => {
   }
 });
 
-save();
+save(false);
 renderAll();
+renderWelcome();
