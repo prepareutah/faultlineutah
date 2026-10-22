@@ -52,7 +52,9 @@
       "<p><strong>For education and preparedness only.</strong> Not an engineering assessment, inspection, insurance determination, real-estate disclosure, or earthquake prediction. " +
       "Talk to a licensed structural engineer about your building.</p>" +
       "<p><strong>Utah does not have a public earthquake early warning system yet.</strong> This site never sends alerts.</p></div>" +
-      '<div><strong>Explore</strong><ul>' + links + "</ul></div>" +
+      '<div><strong>Explore</strong><ul>' + links + "</ul>" +
+      '<p class="small" style="margin-top:12px"><strong>Sister site:</strong> <a href="https://prepareutah.com/" target="_blank" rel="noopener">Prepare Utah</a>, ' +
+      "personal preparedness plans for every Utah hazard.</p></div>" +
       '<div class="newsletter"><strong>Living on the Fault newsletter</strong>' + signup +
       '<p class="small" style="margin-top:12px">Data from the Utah Geological Survey and the U.S. Geological Survey. ' +
       '<a href="/about.html#sources">Sources &amp; dates</a> · <a href="/about.html#privacy">Privacy</a></p></div>' +

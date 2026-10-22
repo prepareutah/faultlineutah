@@ -93,6 +93,7 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 - [ ] Choose a newsletter provider (Buttondown, Substack, Ghost) and paste its form URL into `config.js`.
 - [ ] Set up the `hello@faultlineutah.com` mailbox, or change `contactEmail`.
 - [x] Host: GitHub Pages, deploying automatically from GitHub.
+- [x] Link sister site **Prepare Utah** (prepareutah.com) from the footer (`layout.js`), About, and Make a Plan (Oct 22, 2026).
 
 **Expert review** (product plan §4.5: nothing on basin effects goes public before a seismologist reviews it)
 - [ ] Seismologist: the wording in `content/ground-text.js`; the Magna page's fault and basin sections; the 43% / M6.75 / 50-year figure; the "about 90 times the energy" comparison; the Wasatch section table on `faults.html`; and which ASCE 7 edition to show (the site uses ASCE 7-22 with the default site class).
