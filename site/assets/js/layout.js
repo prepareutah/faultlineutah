@@ -57,7 +57,7 @@
       "personal preparedness plans for every Utah hazard.</p></div>" +
       '<div class="newsletter"><strong>Living on the Fault newsletter</strong>' + signup +
       '<p class="small" style="margin-top:12px">Data from the Utah Geological Survey and the U.S. Geological Survey. ' +
-      '<a href="/about.html#sources">Sources &amp; dates</a> · <a href="/about.html#privacy">Privacy</a></p></div>' +
+      '<a href="/about.html#sources">Sources &amp; dates</a> · <a href="/privacy.html">Privacy</a></p></div>' +
       "</div></div></footer>";
   });
 })();

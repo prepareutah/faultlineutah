@@ -1,0 +1,45 @@
+# Once a month, checks that the site, the outside services it depends on, and
+# every outbound link still work. Problems open (or update) a GitHub issue,
+# which GitHub emails to the repository owner.
+name: Health check
+
+on:
+  schedule:
+    - cron: "41 15 1 * *" # 1st of each month, about 9 a.m. Utah time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the site, services, and links
+        id: check
+        continue-on-error: true
+        run: python3 scripts/check_health.py
+
+      - name: Open or update an issue if anything needs attention
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Only file an issue when something is broken or a link has moved.
+          if ! grep -q "^### Broken\|^### Links that moved" health-report.md; then
+            echo "All clear."; exit 0
+          fi
+          gh label create health-check --color D93F0B --description "Found by the monthly health check" 2>/dev/null || true
+          open=$(gh issue list --label health-check --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body-file health-report.md
+          else
+            gh issue create --title "Health check: something needs attention" --label health-check --body-file health-report.md
+          fi
+
+      - name: Mark the run failed if something is broken
+        if: steps.check.outcome == 'failure'
+        run: exit 1

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy · FaultLine Utah</title>
+<meta name="description" content="What FaultLine Utah does and doesn't do with your information: no cookies, no tracking, no accounts. What your browser shares with the map and address services, and what stays on your device.">
+<meta name="theme-color" content="#1b4d5c">
+<link rel="canonical" href="https://faultlineutah.com/privacy.html">
+<meta property="og:url" content="https://faultlineutah.com/privacy.html">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<meta property="og:title" content="Privacy · FaultLine Utah">
+<meta property="og:description" content="No cookies, no tracking, no accounts. What stays on your device, and what the map and address services see.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FaultLine Utah">
+<meta property="og:image" content="https://faultlineutah.com/assets/img/share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="FaultLine Utah: Know the ground you live on.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/css/site.css">
+<script src="/assets/js/config.js"></script>
+</head>
+<body>
+<div id="site-header"></div><script src="/assets/js/layout.js"></script>
+
+<main id="main" class="wrap article">
+  <div class="read">
+    <h1>Privacy</h1>
+    <p class="small muted">Last updated October 28, 2026</p>
+    <p>FaultLine Utah is built so you can look up an address and make a plan without telling us anything. Here's exactly what happens to your information.</p>
+
+    <div class="notice info">
+      <p><strong>The short version:</strong> no cookies, no ads, no tracking, no analytics, no accounts, and nothing you type is saved on our end. Your plan stays on your own device. To draw the map and find addresses, your browser talks directly to a few public services, listed below.</p>
+    </div>
+
+    <h2>What we collect</h2>
+    <p><strong>Nothing, through the site itself.</strong> FaultLine Utah has no database, no sign-ups, and no forms that send information to us. We don't set cookies and don't use analytics, advertising, or social-media trackers.</p>
+    <p>If you email us, we'll have your email address and message and use them only to reply. We don't add anyone to a mailing list without asking.</p>
+
+    <h2>What stays on your device</h2>
+    <ul>
+      <li><strong>Make a Plan</strong> saves your answers, checkmarks, and household plan sheet in your browser's storage on that device, so you can come back later. It's never sent to us or anyone else. Each browser and device keeps its own copy. To erase it, use <strong>Start over</strong> on the plan page, or clear this site's data in your browser settings.</li>
+      <li><strong>Know Your Ground</strong> keeps the name of the place you looked up in that browser tab until you close it, so the page can show it again. The map point appears in the page address after a <code>#</code>, a part browsers never send to a server, though it will appear in your browser history like any page you visit.</li>
+      <li><strong>The plan PDF</strong> is made in your browser and saved straight to your device. It isn't uploaded anywhere.</li>
+    </ul>
+
+    <h2>What outside services see</h2>
+    <p>Some features need help from public services. Your browser contacts them directly, which means each one receives your device's IP address along with the request, as any website would. We don't control these services; their own privacy policies apply.</p>
+    <div class="table-scroll">
+      <table class="simple">
+        <thead><tr><th>Service</th><th>When</th><th>What it receives</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Pages</a> (hosts this site)</td><td>Every page you load</td><td>Standard web request details, such as your IP address and browser type, which GitHub may keep in security logs.</td></tr>
+          <tr><td><a href="https://www.utah.gov/support/privacypolicy.html" target="_blank" rel="noopener">Utah Geospatial Resource Center</a> (state of Utah)</td><td>When you search for an address</td><td>The text you typed in the search box.</td></tr>
+          <tr><td><a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">OpenStreetMap (Nominatim)</a></td><td>When the state service can't find an address, or when you tap the map or use your location</td><td>Your search text, or the map point, to find the nearest street name.</td></tr>
+          <tr><td><a href="https://www.usgs.gov/office-of-the-director/privacy-policies" target="_blank" rel="noopener">U.S. Geological Survey</a></td><td>When you look up a place</td><td>The location rounded to about 100 meters (330 feet), to get building-code values.</td></tr>
+          <tr><td><a href="https://openfreemap.org/privacy/" target="_blank" rel="noopener">OpenFreeMap</a></td><td>When a map is on screen</td><td>Requests for the map tiles covering the area you're viewing.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Fault, liquefaction, and 2020 Magna results are worked out in your browser from files on this site, so those parts of a lookup send your location to no one.</p>
+
+    <h2>Your location</h2>
+    <p>"Use my location" asks your browser for permission first, and you can say no. If you allow it, the location is used in your browser to show your results and, to find your street name, sent to OpenStreetMap as described above. We never receive it.</p>
+
+    <h2>Children</h2>
+    <p>This site is meant for adults and families planning together. It doesn't collect personal information from anyone, including children.</p>
+
+    <h2>Changes</h2>
+    <p>If we add something that changes this picture, such as a newsletter signup or visitor counting, we'll update this page first and change the date at the top. A newsletter would be run by an email service whose privacy policy we'll link here.</p>
+
+    <h2>Questions</h2>
+    <p>Email <a id="contact" href="#"></a>.</p>
+  </div>
+</main>
+
+<div id="site-footer"></div>
+<script>
+  (function () {
+    var cfg = window.FL_CONFIG || {};
+    var c = document.getElementById("contact");
+    c.href = "mailto:" + cfg.contactEmail;
+    c.textContent = cfg.contactEmail;
+  })();
+</script>
+</body>
+</html>

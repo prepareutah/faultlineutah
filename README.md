@@ -84,11 +84,30 @@ git push
 
 HTTPS is required for "use my location" to work. GitHub issues the certificate automatically once DNS is in place; **Enforce HTTPS** is on under the repo's Settings → Pages. If DNS is ever changed and the certificate stalls, remove the custom domain in Settings → Pages and add it back about an hour after the DNS change (once old DNS caches expire); that's what got the first certificate issued.
 
+## Automatic monthly checks
+
+Two GitHub Actions run on their own each month. You can also start either one any time from the repo's **Actions** tab ("Run workflow").
+
+- **Refresh hazard data** (`.github/workflows/refresh-data.yml`, the 3rd of each month). Re-runs `scripts/build_data.py`. If UGS, UGRC, or USGS published anything new, it opens a **pull request** titled "Monthly hazard data update" with a plain-language summary of what changed. Nothing is published until you merge it. Magna-only changes are new "Did You Feel It?" reports and are routine; if fault or liquefaction maps changed, look up a few familiar addresses after merging and tell the science advisor.
+- **Health check** (`.github/workflows/health-check.yml`, the 1st of each month). Runs `scripts/check_health.py`: loads the site's pages, makes a real query to every outside service the lookup uses (USGS, UGRC, OpenStreetMap, the basemap, the UGS data services), and tests every outbound link. If something is broken or a link has moved, it opens a GitHub **issue** labeled `health-check` (GitHub emails you). Fix it, or ask Claude to, then close the issue.
+
+You can run the health check on this Mac too: `python3 scripts/check_health.py` (writes `health-report.md`).
+
+## Libraries and images
+
+- MapLibre GL JS 4.7.1 and jsPDF 2.5.1 are served from `site/assets/vendor/` (with their licenses), not from outside CDNs, so the map and PDF don't depend on another service. To upgrade one, add a new versioned folder and update the references in `ground.html`, `faults.html`, and `plan.js`.
+- The link-preview image (`site/assets/img/share.png`) and iPhone home-screen icon are drawn by `swift scripts/make_images.swift`. Edit that file to change them.
+
+## Keeping it anonymous
+
+The site and this README don't name the person behind FaultLine Utah. Commits in this repo are signed **FaultLine Utah <hello@faultlineutah.com>** (a repo-only Git setting; check with `git config user.name`). Keep personal names, usernames, and personal email addresses out of pages, commit messages, and this file. The domain registration is private (Domains By Proxy).
+
 ## To-do before public launch (project manager)
 
 **Accounts and setup**
 - [x] Register **faultlineutah.com** (GoDaddy, Oct 22, 2026). Consider faultlineutah.org too.
 - [x] Point GoDaddy DNS at GitHub Pages (table above), then turn on Enforce HTTPS (done Oct 22, 2026).
+- [ ] Turn on **auto-renew** for faultlineutah.com in GoDaddy (paid through Oct 22, 2027).
 - [ ] Optional: get a free **UGRC API key** at https://developer.mapserv.utah.gov, restrict it to faultlineutah.com, and paste it into `config.js`. Worth doing before any big media push. Or email UGRC to confirm they're happy for a public site to use their open Masquerade locator.
 - [ ] Choose a newsletter provider (Buttondown, Substack, Ghost) and paste its form URL into `config.js`.
 - [ ] Set up the `hello@faultlineutah.com` mailbox, or change `contactEmail`.
@@ -98,7 +117,7 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 **Expert review** (product plan §4.5: nothing on basin effects goes public before a seismologist reviews it)
 - [ ] Seismologist: the wording in `content/ground-text.js`; the Magna page's fault and basin sections; the 43% / M6.75 / 50-year figure; the "about 90 times the energy" comparison; the Wasatch section table on `faults.html`; and which ASCE 7 edition to show (the site uses ASCE 7-22 with the default site class).
 - [ ] Structural engineer: `brick.html` (header-brick guidance, the pre-1975 rule of thumb, retrofit priorities), plus the "Bigger projects" tasks in `content/checklist.js`, including the chimney and foundation-bolting advice.
-- [ ] Lawyer: disclaimer wording, privacy section, data-license attributions.
+- [ ] Lawyer: disclaimer wording, the privacy page (`privacy.html`), data-license attributions.
 
 **Data licenses** (product plan §4.2: confirm in writing)
 - [ ] UGS hazard layers (faults, rupture zones, liquefaction): confirm terms of use and preferred attribution.
@@ -108,7 +127,7 @@ HTTPS is required for "use my location" to work. GitHub issues the certificate a
 
 **Content to add**
 - [ ] Your illustrations for "Is It Brick?" (the brick diagrams are placeholders drawn in code).
-- [ ] A share image (`og:image`) for links posted on social media.
+- [x] A share image for links posted on social media (Oct 28, 2026).
 - [ ] Spanish version (plan v2).
 
 ## Known limits

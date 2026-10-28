@@ -7,7 +7,7 @@ import { buildPlanPDF } from "./plan-pdf.js";
 
 const $ = (s) => document.querySelector(s);
 const STORE = "fl:plan";
-const JSPDF = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+const JSPDF = "/assets/vendor/jspdf-2.5.1/jspdf.umd.min.js";
 
 const saved = load();
 const answers = { days: 14, adults: 1, kids: 0, babies: 0, dogs: 0, cats: 0, ...(saved.answers || {}) };

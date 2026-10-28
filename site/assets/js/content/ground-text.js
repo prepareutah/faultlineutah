@@ -91,7 +91,7 @@ export function faultCard({ any, young, wasatch }, inZone) {
 
   return {
     level, pill, headline, body: body.join(""), science,
-    source: 'Utah Geological Survey, <a href="https://geology.utah.gov/apps/qfaults/" target="_blank" rel="noopener">Utah Quaternary Fault and Fold Database</a> and surface-fault-rupture special study zones.',
+    source: 'Utah Geological Survey, <a href="https://maps.geology.utah.gov/hazards/" target="_blank" rel="noopener">Utah Quaternary Fault and Fold Database</a> and surface-fault-rupture special study zones.',
   };
 }
 
@@ -133,7 +133,7 @@ export function liquefactionCard(liq) {
 const LIQ_HELPS = "<p><strong>What helps:</strong> flexible gas and water connections, knowing how to shut off your utilities, " +
   "and asking a licensed engineer about the foundation before you build, buy, or remodel.</p>";
 const LIQ_LOWER = "<p>Lower susceptibility is good news for the ground under you. It doesn't change how strongly the area would shake.</p>";
-const LIQ_SOURCE = 'Utah Geological Survey, <a href="https://geology.utah.gov/apps/hazards/" target="_blank" rel="noopener">Geologic Hazards Portal</a>, liquefaction susceptibility.';
+const LIQ_SOURCE = 'Utah Geological Survey, <a href="https://maps.geology.utah.gov/hazards/" target="_blank" rel="noopener">Geologic Hazards Portal</a>, liquefaction susceptibility.';
 
 // The 1994 maps rated potential as the chance, in 100 years, of shaking strong
 // enough to liquefy the ground.

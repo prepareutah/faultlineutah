@@ -1,0 +1,62 @@
+# Once a month, re-downloads the hazard data (UGS, UGRC, USGS). If anything
+# changed, it opens a pull request for review instead of publishing directly.
+# Merging that pull request publishes the new data.
+name: Refresh hazard data
+
+on:
+  schedule:
+    - cron: "17 9 3 * *" # 3rd of each month, about 3 a.m. Utah time
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download the latest data
+        run: python3 scripts/build_data.py
+
+      - name: See what changed
+        id: diff
+        run: |
+          # build_info.json only records today's date, so it doesn't count as a change.
+          count=$(git status --porcelain -- site/data ':(exclude)site/data/build_info.json' | wc -l)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          python3 scripts/data_changes.py > summary.md
+          cat summary.md
+
+      - name: Open or update the review pull request
+        if: steps.diff.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c data-refresh
+          git add site/data
+          git commit -m "Refresh hazard data ($(date -u +%Y-%m-%d))"
+          git push --force origin data-refresh
+          {
+            echo "The monthly data check found updates from the data sources."
+            echo
+            cat summary.md
+            echo
+            echo "**To publish:** merge this pull request. The site redeploys in about a minute."
+            echo "**If a fault or liquefaction map changed:** look up a few familiar addresses after merging, and mention it to the science advisor."
+            echo "**Magna-only changes** are new \"Did You Feel It?\" reports and are safe to merge."
+          } > body.md
+          if [ "$(gh pr view data-refresh --json state --jq .state 2>/dev/null)" = "OPEN" ]; then
+            gh pr edit data-refresh --body-file body.md
+            gh pr comment data-refresh --body "Updated with data from $(date -u +%B\ %-d,\ %Y)."
+          else
+            gh pr create --head data-refresh --base main --title "Monthly hazard data update ($(date -u +%B\ %Y))" --body-file body.md
+          fi

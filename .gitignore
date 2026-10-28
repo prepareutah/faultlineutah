@@ -11,3 +11,8 @@ __pycache__/
 
 # iCloud Drive conflict copies ("file 2.json")
 * [0-9].*
+
+# Reports written by scripts/check_health.py and the data-refresh workflow
+health-report.md
+summary.md
+body.md
