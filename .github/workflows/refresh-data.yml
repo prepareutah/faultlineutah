@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
 concurrency:
   group: data-refresh
@@ -57,6 +58,15 @@ jobs:
           if [ "$(gh pr view data-refresh --json state --jq .state 2>/dev/null)" = "OPEN" ]; then
             gh pr edit data-refresh --body-file body.md
             gh pr comment data-refresh --body "Updated with data from $(date -u +%B\ %-d,\ %Y)."
-          else
-            gh pr create --head data-refresh --base main --title "Monthly hazard data update ($(date -u +%B\ %Y))" --body-file body.md
+          elif ! gh pr create --head data-refresh --base main --title "Monthly hazard data update ($(date -u +%B\ %Y))" --body-file body.md; then
+            # Opening pull requests needs "Allow GitHub Actions to create and approve pull
+            # requests" (Settings > Actions > General). Without it, file an issue with a
+            # one-click link to open the pull request by hand.
+            gh label create data-refresh --color 1B4D5C --description "Monthly hazard data update" 2>/dev/null || true
+            {
+              echo "**[Open the pull request](https://github.com/${{ github.repository }}/compare/main...data-refresh?expand=1)** to review and publish the new data."
+              echo
+              cat body.md
+            } > issue.md
+            gh issue create --title "Monthly hazard data update ($(date -u +%B\ %Y))" --label data-refresh --body-file issue.md
           fi
